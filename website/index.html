@@ -48,7 +48,7 @@
  $('signup').addEventListener('click',async()=>{if(!$('email').value.trim()||$('password').value.length<8){$('account-status').textContent='Enter a valid email and a password of at least 8 characters.';return;}const {data,error}=await db.auth.signUp({email:$('email').value.trim(),password:$('password').value});$('account-status').textContent=error?error.message:(data.session?'Account created.':'Signup submitted. Check your email if confirmation is enabled.');await updateAuth();});
  $('reset').addEventListener('click',async()=>{const e=$('email').value.trim();if(!e.includes('@')){$('account-status').textContent='Enter your email first.';return;}const {error}=await db.auth.resetPasswordForEmail(e);$('account-status').textContent=error?error.message:'If the account exists, a reset email will be sent.';});
  $('logout').addEventListener('click',async()=>{const {error}=await db.auth.signOut();$('account-status').textContent=error?error.message:'Signed out.';await updateAuth();});
- db.auth.onAuthStateChange(()=>updateAuth());load();updateAuth();
+ db.auth.onAuthStateChange(()=>updateAuth());db.channel('website-public-announcements').on('postgres_changes',{event:'INSERT',schema:'public',table:'app_notifications'},payload=>{if(payload.new&&payload.new.audience==='all')load();}).subscribe();load();updateAuth();
 })();
 </script>
 </body></html>
