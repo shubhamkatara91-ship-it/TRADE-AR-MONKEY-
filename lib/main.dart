@@ -24,10 +24,23 @@ class TradeArMoneyApp extends StatelessWidget {
 class HomePage extends StatefulWidget { const HomePage({super.key}); @override State<HomePage> createState()=>_HomePageState(); }
 class _HomePageState extends State<HomePage> {
   int tab=0; bool busy=false, showPassword=false;
+  RealtimeChannel? _notificationChannel;
+  @override void initState(){
+    super.initState();
+    _notificationChannel=client.channel('public-app-notifications')
+      .onPostgresChanges(event:PostgresChangeEvent.insert,schema:'public',table:'app_notifications',callback:(payload){
+        if(!mounted)return;
+        setState((){});
+        final record=payload.newRecord;
+        if(record['audience']=='all' || (client.auth.currentUser!=null && record['audience']=='users')){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('New announcement: ${record['title']??'TRADE AR MONEY'}')));
+        }
+      }).subscribe();
+  }
   final email=TextEditingController(), password=TextEditingController();
   final formKey=GlobalKey<FormState>();
   final client=Supabase.instance.client;
-  @override void dispose(){email.dispose();password.dispose();super.dispose();}
+  @override void dispose(){email.dispose();password.dispose();if(_notificationChannel!=null){client.removeChannel(_notificationChannel!);}super.dispose();}
   void msg(String s){if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(s)));}
   Future<void> support() async { final ok=await launchUrl(Uri.parse(supportUrl),mode:LaunchMode.externalApplication); if(!ok) msg('Telegram link नहीं खुला।'); }
   Future<void> openDocument(String url) async {
@@ -85,7 +98,7 @@ class _HomePageState extends State<HomePage> {
     if(s.connectionState==ConnectionState.waiting)return const Center(child:CircularProgressIndicator());
     if(s.hasError)return ListView(children:[errorBox(s.error!)]);
     final rows=s.data??[];
-    if(rows.isEmpty)return ListView(padding:const EdgeInsets.all(24),children:const [Icon(Icons.notifications_none,size:42,color:accent),SizedBox(height:12),Text('Notifications',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),SizedBox(height:8),Text('अभी कोई notification नहीं है। Admin द्वारा प्रकाशित संदेश यहाँ दिखेंगे। यह in-app notification feed है; push notification के लिए Firebase सेटअप अलग से आवश्यक है।')]);
+    if(rows.isEmpty)return ListView(padding:const EdgeInsets.all(24),children:const [Icon(Icons.notifications_none,size:42,color:accent),SizedBox(height:12),Text('Notifications',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),SizedBox(height:8),Text('अभी कोई notification नहीं है। Admin के नए announcements उपलब्ध होने पर यह feed अपने-आप refresh होगी। Android lock-screen push notifications के लिए Firebase project और credentials अलग से आवश्यक हैं।')]);
     return ListView(padding:const EdgeInsets.all(16),children:[const Text('NOTIFICATIONS',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),...rows.map((r)=>Card(color:panel,child:ListTile(leading:const Icon(Icons.notifications_active,color:accent),title:Text('${r['title']}'),subtitle:Text('${r['body']}\n${r['created_at']}'))))]);
   }));
   @override Widget build(BuildContext context){
