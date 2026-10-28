@@ -1,0 +1,84 @@
+name: Validate TRADE AR MONEY source
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+      - 'supabase/**'
+      - 'lib/**'
+      - 'pubspec.yaml'
+      - '.github/workflows/validate-project.yml'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Check website HTML and inline JavaScript syntax
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import re, subprocess, tempfile
+
+          class CheckHTML(HTMLParser):
+              def error(self, message):
+                  raise RuntimeError(message)
+
+          files = [Path("website/index.html"), Path("website/admin.html")]
+          for path in files:
+              source = path.read_text(encoding="utf-8")
+              parser = CheckHTML(convert_charrefs=True)
+              parser.feed(source)
+              parser.close()
+              scripts = re.findall(r"<script(?![^>]*\\bsrc=)[^>]*>(.*?)</script\\s*>", source, re.I | re.S)
+              for index, script in enumerate(scripts):
+                  if not script.strip():
+                      continue
+                  temp = Path(tempfile.gettempdir()) / f"{path.stem}-{index}.js"
+                  temp.write_text(script, encoding="utf-8")
+                  subprocess.run(["node", "--check", str(temp)], check=True)
+              print(f"HTML parsed; inline JS syntax checked: {path}")
+
+          schema = Path("supabase/schema.sql").read_text(encoding="utf-8").lower()
+          required = [
+              "enable row level security",
+              "create or replace function public.is_admin()",
+              "using(public.is_admin()) with check(public.is_admin())",
+              "create policy \"users can create own user profile\"",
+              "role='user'",
+              "device_push_tokens",
+          ]
+          missing = [term for term in required if term not in schema]
+          if missing:
+              raise SystemExit("Schema safety check failed; missing: " + ", ".join(missing))
+          if "service_role" in Path("lib/main.dart").read_text(encoding="utf-8").lower():
+              raise SystemExit("Do not put a Supabase service-role key in the Flutter client.")
+          print("Schema access-control markers checked; no service-role reference in Flutter client.")
+          PY
+      - name: Build Android release APK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter create --platforms=android --org com.tradearmoney --project-name trade_ar_money build_scaffold
+      - run: |
+          cp -R lib build_scaffold/
+          cp pubspec.yaml build_scaffold/
+        name: Copy Flutter source
+      - run: flutter pub get
+        working-directory: build_scaffold
+        name: Resolve Flutter dependencies
+      - run: flutter build apk --release
+        working-directory: build_scaffold
+        name: Compile release APK
