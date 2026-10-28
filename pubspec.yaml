@@ -1,0 +1,17 @@
+name: trade_ar_money
+description: TRADE AR MONEY educational community app
+publish_to: "none"
+version: 0.3.0+3
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+dependencies:
+  flutter:
+    sdk: flutter
+  url_launcher: ^6.3.1
+  supabase_flutter: ^2.8.0
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+flutter:
+  uses-material-design: true
