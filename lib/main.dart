@@ -60,14 +60,14 @@ class _HomePageState extends State<HomePage> {
     if(s.hasError)return ListView(children:[errorBox(s.error!)]);
     final rows=s.data??[];
     if(rows.isEmpty)return ListView(padding:const EdgeInsets.all(24),children:const [Icon(Icons.history,size:42,color:accent),SizedBox(height:12),Text('Results History',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),SizedBox(height:8),Text('अभी कोई verified result रिकॉर्ड नहीं है। डेटा स्रोत सत्यापित होने के बाद रिकॉर्ड यहाँ दिखेंगे।')]);
-    return ListView(padding:const EdgeInsets.all(16),children:[const Text('RESULTS HISTORY',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),...rows.map((r)=>Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:Text('${r['result_label']}'),subtitle:Text('${r['source']} • ${r['observed_at']}'),trailing:Text('${r['result_value']??''}')))]);
+    return ListView(padding:const EdgeInsets.all(16),children:[const Text('RESULTS HISTORY',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),...rows.map((r)=>Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:Text('${r['result_label']}'),subtitle:Text('${r['source']} • ${r['observed_at']}'),trailing:Text('${r['result_value']??''}'))))]);
   }));
   Widget notificationsPage()=>RefreshIndicator(onRefresh:()async{setState((){});await loadNotifications();},child:FutureBuilder<List<Map<String,dynamic>>>(future:loadNotifications(),builder:(context,s){
     if(s.connectionState==ConnectionState.waiting)return const Center(child:CircularProgressIndicator());
     if(s.hasError)return ListView(children:[errorBox(s.error!)]);
     final rows=s.data??[];
     if(rows.isEmpty)return ListView(padding:const EdgeInsets.all(24),children:const [Icon(Icons.notifications_none,size:42,color:accent),SizedBox(height:12),Text('Notifications',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),SizedBox(height:8),Text('अभी कोई notification नहीं है। Admin द्वारा प्रकाशित संदेश यहाँ दिखेंगे। यह in-app notification feed है; push notification के लिए Firebase सेटअप अलग से आवश्यक है।')]);
-    return ListView(padding:const EdgeInsets.all(16),children:[const Text('NOTIFICATIONS',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),...rows.map((r)=>Card(color:panel,child:ListTile(leading:const Icon(Icons.notifications_active,color:accent),title:Text('${r['title']}'),subtitle:Text('${r['body']}\n${r['created_at']}')))]);
+    return ListView(padding:const EdgeInsets.all(16),children:[const Text('NOTIFICATIONS',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),...rows.map((r)=>Card(color:panel,child:ListTile(leading:const Icon(Icons.notifications_active,color:accent),title:Text('${r['title']}'),subtitle:Text('${r['body']}\n${r['created_at']}'))))]);
   }));
   @override Widget build(BuildContext context){
     final user=client.auth.currentUser;
