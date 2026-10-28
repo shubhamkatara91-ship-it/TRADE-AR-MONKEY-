@@ -52,7 +52,8 @@ create table if not exists public.learning_articles (
 );
 alter table public.learning_articles enable row level security;
 drop policy if exists "Users can read published learning articles" on public.learning_articles;
-create policy "Users can read published learning articles" on public.learning_articles for select to authenticated using(published=true);
+drop policy if exists "Anyone can read published learning articles" on public.learning_articles;
+create policy "Anyone can read published learning articles" on public.learning_articles for select to anon, authenticated using(published=true);
 drop policy if exists "Admins can manage learning articles" on public.learning_articles;
 create policy "Admins can manage learning articles" on public.learning_articles for all to authenticated using(public.is_admin()) with check(public.is_admin());
 grant select on public.result_history, public.app_notifications, public.learning_articles to anon, authenticated;
@@ -72,3 +73,18 @@ where not exists (select 1 from public.learning_articles a where a.title=seed.ti
 insert into public.app_notifications(title,body,audience)
 select 'Welcome to TRADE AR MONEY','This app shares educational material only. Live data and push notifications are not enabled unless separately configured.','all'
 where not exists (select 1 from public.app_notifications n where n.title='Welcome to TRADE AR MONEY');
+
+
+-- Enable live in-app updates for announcements. Safe to rerun.
+do $$
+begin
+  alter publication supabase_realtime add table public.app_notifications;
+exception
+  when duplicate_object then null;
+  when undefined_object then
+    raise notice 'supabase_realtime publication is not available; enable Realtime for app_notifications in the Supabase dashboard.';
+end $$;
+
+-- Explicit grants for the app's public read surfaces.
+grant select on public.result_history, public.learning_articles to anon, authenticated;
+grant select on public.app_notifications to anon, authenticated;
