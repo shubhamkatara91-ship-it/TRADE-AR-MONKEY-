@@ -120,6 +120,15 @@ class _HomePageState extends State<HomePage> {
           ])),
         ]else ...[
           Card(color:panel,child:ListTile(leading:const Icon(Icons.account_circle,color:accent),title:const Text('Signed in as'),subtitle:Text(user.email??'Email unavailable'))),
+          FutureBuilder<Map<String,dynamic>?>(
+            future:client.from('profiles').select('role').eq('id',user.id).maybeSingle(),
+            builder:(context,s){
+              if(s.data?['role']!='admin') return const SizedBox.shrink();
+              return SizedBox(width:double.infinity,child:FilledButton.icon(
+                onPressed:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>AdminPanel(client:client))),
+                icon:const Icon(Icons.admin_panel_settings),label:const Text('Open Admin Panel')));
+            }),
+
           SizedBox(width:double.infinity,child:OutlinedButton.icon(onPressed:logout,icon:const Icon(Icons.logout),label:const Text('Log out'))),
         ],
         const SizedBox(height:14),OutlinedButton.icon(onPressed:support,icon:const Icon(Icons.support_agent),label:const Text('Contact support')),
@@ -138,4 +147,57 @@ class _HomePageState extends State<HomePage> {
         NavigationDestination(icon:Icon(Icons.person_outline),label:'Account'),
       ]));
   }
+}
+
+class AdminPanel extends StatefulWidget {
+  final SupabaseClient client;
+  const AdminPanel({super.key,required this.client});
+  @override State<AdminPanel> createState()=>_AdminPanelState();
+}
+class _AdminPanelState extends State<AdminPanel> {
+  final title=TextEditingController(),body=TextEditingController(),category=TextEditingController(text:'Basics');
+  final source=TextEditingController(),resultLabel=TextEditingController(),resultValue=TextEditingController();
+  bool busy=false;
+  @override void dispose(){title.dispose();body.dispose();category.dispose();source.dispose();resultLabel.dispose();resultValue.dispose();super.dispose();}
+  void message(String s){if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(s)));}
+  Future<void> saveArticle() async {
+    if(title.text.trim().isEmpty||body.text.trim().isEmpty){message('Title और content भरें।');return;}
+    setState(()=>busy=true);
+    try{await widget.client.from('learning_articles').insert({'title':title.text.trim(),'body':body.text.trim(),'category':category.text.trim().isEmpty?'Basics':category.text.trim(),'published':true});title.clear();body.clear();message('Learning article publish हो गया।');}
+    catch(e){message('Save नहीं हुआ। Admin role और database schema जाँचें।');}
+    finally{if(mounted)setState(()=>busy=false);}
+  }
+  Future<void> saveNotice() async {
+    if(title.text.trim().isEmpty||body.text.trim().isEmpty){message('Title और message भरें।');return;}
+    setState(()=>busy=true);
+    try{await widget.client.from('app_notifications').insert({'title':title.text.trim(),'body':body.text.trim(),'audience':'all'});title.clear();body.clear();message('Announcement publish हो गया।');}
+    catch(e){message('Save नहीं हुआ। Admin role और database schema जाँचें।');}
+    finally{if(mounted)setState(()=>busy=false);}
+  }
+  Future<void> saveResult() async {
+    if(source.text.trim().isEmpty||resultLabel.text.trim().isEmpty){message('Source और result label आवश्यक हैं।');return;}
+    setState(()=>busy=true);
+    try{await widget.client.from('result_history').insert({'source':source.text.trim(),'result_label':resultLabel.text.trim(),'result_value':resultValue.text.trim().isEmpty?null:resultValue.text.trim(),'observed_at':DateTime.now().toUtc().toIso8601String()});source.clear();resultLabel.clear();resultValue.clear();message('Record save हुआ। केवल verified source का result दर्ज करें।');}
+    catch(e){message('Save नहीं हुआ। Admin role और database schema जाँचें।');}
+    finally{if(mounted)setState(()=>busy=false);}
+  }
+  Widget field(TextEditingController c,String label,{int lines=1})=>Padding(padding:const EdgeInsets.only(bottom:10),child:TextField(controller:c,maxLines:lines,decoration:InputDecoration(labelText:label)));
+  Widget section(String name,IconData icon,List<Widget> children)=>Card(color:panel,child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[Icon(icon,color:accent),const SizedBox(width:8),Text(name,style:const TextStyle(fontSize:18,fontWeight:FontWeight.bold))]),const SizedBox(height:12),...children])));
+  @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Admin Panel')),body:ListView(padding:const EdgeInsets.all(16),children:[
+    const Text('Admin tools are protected by Supabase Row Level Security. Publish only accurate, authorized information.',style:TextStyle(color:Colors.white70)),
+    const SizedBox(height:12),
+    section('Publish learning article',Icons.menu_book,[
+      field(title,'Article title'),field(category,'Category'),field(body,'Article content',lines:5),
+      SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:saveArticle,child:const Text('Publish article')))
+    ]),
+    section('Publish announcement',Icons.notifications_active,[
+      field(title,'Announcement title'),field(body,'Message',lines:3),
+      SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:saveNotice,child:const Text('Publish to all users')))
+    ]),
+    section('Add verified result record',Icons.fact_check,[
+      field(source,'Source / provider'),field(resultLabel,'Result label'),field(resultValue,'Result value (optional)'),
+      SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:saveResult,child:const Text('Save verified record'))),
+      const SizedBox(height:6),const Text('This records a verified result manually; it does not connect a live API.',style:TextStyle(color:Colors.orangeAccent))
+    ]),
+  ]));
 }
