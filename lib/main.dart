@@ -30,6 +30,10 @@ class _HomePageState extends State<HomePage> {
   @override void dispose(){email.dispose();password.dispose();super.dispose();}
   void msg(String s){if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(s)));}
   Future<void> support() async { final ok=await launchUrl(Uri.parse(supportUrl),mode:LaunchMode.externalApplication); if(!ok) msg('Telegram link नहीं खुला।'); }
+  Future<void> openDocument(String url) async {
+    final ok=await launchUrl(Uri.parse(url),mode:LaunchMode.externalApplication);
+    if(!ok) msg('लिंक नहीं खुला। इंटरनेट कनेक्शन जाँचें।');
+  }
   Future<void> auth(bool signup) async {
     if(!(formKey.currentState?.validate()??false)) return;
     setState(()=>busy=true);
@@ -132,6 +136,10 @@ class _HomePageState extends State<HomePage> {
           SizedBox(width:double.infinity,child:OutlinedButton.icon(onPressed:logout,icon:const Icon(Icons.logout),label:const Text('Log out'))),
         ],
         const SizedBox(height:14),OutlinedButton.icon(onPressed:support,icon:const Icon(Icons.support_agent),label:const Text('Contact support')),
+        const SizedBox(height:14),
+        const Text('LEGAL & PRIVACY',style:TextStyle(fontSize:16,fontWeight:FontWeight.bold)),
+        ListTile(contentPadding:EdgeInsets.zero,leading:const Icon(Icons.privacy_tip_outlined,color:accent),title:const Text('Privacy Policy'),subtitle:const Text('Review data handling information'),onTap:()=>openDocument('https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/blob/main/docs/PRIVACY_POLICY.md')),
+        ListTile(contentPadding:EdgeInsets.zero,leading:const Icon(Icons.description_outlined,color:accent),title:const Text('Terms of Use'),subtitle:const Text('Review app terms and limitations'),onTap:()=>openDocument('https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/blob/main/docs/TERMS_OF_USE.md')),
         const SizedBox(height:14),const Text('Admin access must be granted securely in the database. Never place service-role secrets in the app.',style:TextStyle(color:Colors.white60)),
       ]),
     ];
