@@ -12,10 +12,11 @@
 - Hindi setup instructions and release checklist.
 
 ## Android APK build
-- GitHub Actions Android build #19 **successful**.
-- Build run: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40747801664
-- Download: open the run, open **Artifacts**, download `TRADE-AR-MONEY-release-apk` ZIP, then extract the APK.
-- APK artifact is the Android source build from the successful run. Changes since that run affect documentation and the website deployment workflow, not Flutter app source.
+- GitHub Actions validation/build run #3 **successful**; website HTML/JS checks and Flutter release APK compilation passed.
+- Latest build run: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40751865217
+- Latest artifact: `TRADE-AR-MONEY-release-apk-latest` (about 24.7 MB), artifact ID `12844062181`; it expires on 2026-11-11.
+- Download: open the latest run, open **Artifacts**, download `TRADE-AR-MONEY-release-apk-latest` ZIP, then extract the APK.
+- Build result confirms compilation only; it does not verify live Supabase configuration, hosting, push delivery, or physical-device behavior.
 
 ## अभी भी blocked / unverified
 1. **Website deployment:** latest run #14 failed in `actions/configure-pages` because GitHub integration cannot create the repository Pages site. Latest run: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40750362033
