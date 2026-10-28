@@ -21,3 +21,9 @@ The GitHub Pages workflow is `.github/workflows/deploy-website.yml`. After Pages
 
 ## Database setup
 Run all SQL in `supabase/schema.sql` from the matching Supabase project's SQL Editor. Then follow `docs/SUPABASE_SETUP_HI.md` to assign the first admin account securely. The app and website are not production-ready until the database and account flows have been tested.
+
+## Latest Android APK build
+GitHub Actions build **#17** completed successfully on 2026-10-28. Download the artifact named **TRADE-AR-MONEY-release-apk** from the run page:
+https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40745641233
+
+Open the run page, scroll to **Artifacts**, and download the ZIP. Extract it and install the APK on your Android device. Android may ask you to allow installs from your browser or file manager. Only install if you trust this project. The artifact is temporary and expires on 2027-01-26. This confirms compilation, not full device or backend testing.
