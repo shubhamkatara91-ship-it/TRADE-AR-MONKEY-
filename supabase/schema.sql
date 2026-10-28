@@ -53,4 +53,18 @@ drop policy if exists "Admins can manage learning articles" on public.learning_a
 create policy "Admins can manage learning articles" on public.learning_articles for all to authenticated using(public.is_admin()) with check(public.is_admin());
 grant select on public.result_history, public.app_notifications, public.learning_articles to authenticated;
 grant insert, update, delete on public.result_history, public.app_notifications, public.learning_articles to authenticated;
-grant usage, select on all sequences in schema public to authenticated;
+grant usage, select on sequence public.result_history_id_seq, public.app_notifications_id_seq, public.learning_articles_id_seq to authenticated;
+
+-- Safe starter learning content; re-running this schema does not duplicate these titles.
+insert into public.learning_articles(title,body,category,published)
+select seed.title,seed.body,seed.category,true
+from (values
+ ('Probability and uncertainty','A past outcome does not determine the next independent outcome. Be cautious of patterns that claim to guarantee a future result.','Basics'),
+ ('Risk management basics','Never borrow money to speculate. Decide what you can afford to lose, understand uncertainty, and avoid guaranteed-profit claims.','Risk'),
+ ('Verify information sources','Check the provider, timestamp, and original source before trusting a result. Treat unverified screenshots and forwarded messages as unconfirmed.','Verification')
+) as seed(title,body,category)
+where not exists (select 1 from public.learning_articles a where a.title=seed.title);
+
+insert into public.app_notifications(title,body,audience)
+select 'Welcome to TRADE AR MONEY','This app shares educational material only. Live data and push notifications are not enabled unless separately configured.','all'
+where not exists (select 1 from public.app_notifications n where n.title='Welcome to TRADE AR MONEY');
