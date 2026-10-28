@@ -56,3 +56,16 @@ Firebase project/configuration owner के पास नहीं होने 
 
 ## सुरक्षा नोट
 App में केवल Supabase publishable/anon key रखें. Service-role key, FCM service-account private key और provider API secrets केवल trusted server-side environment में रखें.
+
+
+## F. Server-side Firebase push function (prepared, not yet live)
+Repository includes `supabase/functions/send-push/index.ts`, a server-side function that checks the caller's Supabase session and admin role before sending FCM HTTP v1 notifications. It uses the private Firebase service-account JSON only as an Edge Function secret.
+
+1. Apply the latest `supabase/schema.sql` again after reviewing it; it creates `device_push_tokens` with per-user row-level security.
+2. Install Supabase CLI on a trusted computer and link this project. Deploy the function:
+   `supabase functions deploy send-push`
+3. In Supabase Edge Function secrets, set `FCM_SERVICE_ACCOUNT_JSON` to the complete Firebase service-account JSON. Do not add it to GitHub or the mobile app.
+4. Configure Firebase Android app and add `google-services.json`, FlutterFire initialization, and Firebase Messaging token registration in the Flutter app. Device tokens must be registered into `device_push_tokens` while the user is signed in.
+5. Invoke `send-push` from the admin announcement flow only after Firebase configuration and token registration are implemented. Test on a real Android device, including background/locked states.
+
+Important: the server function is a secured foundation, not a claim that push already works. The current app does not yet initialize Firebase or register device tokens, so there are no push recipients until those client steps are completed. Never commit the Firebase service account JSON.
