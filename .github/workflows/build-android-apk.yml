@@ -5,6 +5,9 @@ on:
     branches: [main]
 permissions:
   contents: read
+concurrency:
+  group: trade-ar-money-apk-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,11 +18,12 @@ jobs:
           channel: stable
           cache: true
       - name: Generate Android project
-        run: flutter create --platforms=android --project-name trade_ar_money build_scaffold
+        run: flutter create --platforms=android --org com.tradearmoney --project-name trade_ar_money build_scaffold
       - name: Copy app source
         run: |
           cp -R lib build_scaffold/
           cp pubspec.yaml build_scaffold/
+          sed -i 's/android:label="build_scaffold"/android:label="TRADE AR MONEY"/' build_scaffold/android/app/src/main/AndroidManifest.xml
       - name: Resolve dependencies
         working-directory: build_scaffold
         run: flutter pub get
