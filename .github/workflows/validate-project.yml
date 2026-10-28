@@ -82,3 +82,10 @@ jobs:
       - run: flutter build apk --release
         working-directory: build_scaffold
         name: Compile release APK
+      - name: Upload release APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TRADE-AR-MONEY-release-apk-latest
+          path: build_scaffold/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
