@@ -33,3 +33,10 @@
 - किसी live provider API का contract/license और authorization जाँचे; API secret केवल server/Edge Function में रखें।
 - Firebase push messaging अभी configure नहीं है। मौजूदा Alerts tab in-app feed है, Android push notification नहीं।
 - Release APK को असली Android device पर install करके test करें।
+
+## 5. Website deploy (एक बार owner setting)
+GitHub Actions deployment में अगर `Get Pages site failed` या `Resource not accessible by integration` दिखे:
+1. Repository खोलें → **Settings → Pages**.
+2. **Build and deployment → Source** में **GitHub Actions** चुनें; अगर Pages enable करने का विकल्प दिखे तो enable करें.
+3. फिर **Actions → Deploy TRADE AR MONEY website → Run workflow** से workflow दोबारा चलाएँ.
+4. Successful run में environment deployment URL दिखेगा. तब तक website source repo में मौजूद है, लेकिन public website live होने की पुष्टि नहीं है.
