@@ -50,6 +50,21 @@ class _HomePageState extends State<HomePage> {
     final r=await client.from('result_history').select('id,source,result_label,result_value,observed_at').order('observed_at',ascending:false).limit(100);
     return List<Map<String,dynamic>>.from(r);
   }
+  Future<List<Map<String,dynamic>>> loadLearning() async {
+    final r=await client.from('learning_articles').select('id,title,body,category').eq('published',true).order('created_at',ascending:false).limit(100);
+    return List<Map<String,dynamic>>.from(r);
+  }
+  Widget learningPage()=>RefreshIndicator(onRefresh:()async{setState((){});await loadLearning();},child:FutureBuilder<List<Map<String,dynamic>>>(future:loadLearning(),builder:(context,s){
+    if(s.connectionState==ConnectionState.waiting)return const Center(child:CircularProgressIndicator());
+    if(s.hasError)return ListView(children:[errorBox(s.error!)]);
+    final rows=s.data??[];
+    if(rows.isEmpty)return ListView(padding:const EdgeInsets.all(24),children:const [
+      Icon(Icons.menu_book,size:42,color:accent),SizedBox(height:12),
+      Text('Learn & Guides',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),SizedBox(height:8),
+      Text('Learning articles will appear here after an admin publishes them in Supabase.')
+    ]);
+    return ListView(padding:const EdgeInsets.all(16),children:[const Text('LEARN & GUIDES',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),...rows.map((r)=>Card(color:panel,child:ExpansionTile(leading:const Icon(Icons.menu_book,color:accent),title:Text('${r['title']}'),subtitle:Text('${r['category']}'),children:[Padding(padding:const EdgeInsets.all(16),child:Align(alignment:Alignment.centerLeft,child:Text('${r['body']}')))])))]);
+  }));
   Future<List<Map<String,dynamic>>> loadNotifications() async {
     final r=await client.from('app_notifications').select('id,title,body,created_at').order('created_at',ascending:false).limit(50);
     return List<Map<String,dynamic>>.from(r);
@@ -84,12 +99,7 @@ class _HomePageState extends State<HomePage> {
         Card(color:panel,child:ListTile(leading:const Icon(Icons.support_agent,color:accent),title:const Text('Telegram Support'),subtitle:const Text('Open Telegram'),onTap:support)),
         if(user!=null)Card(color:panel,child:ListTile(leading:const Icon(Icons.verified_user,color:accent),title:const Text('Signed in'),subtitle:Text(user.email??'Account active'))),
       ]),
-      ListView(padding:const EdgeInsets.all(18),children:const [
-        Text('LEARN',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),
-        Card(color:panel,child:ListTile(leading:Icon(Icons.school,color:accent),title:Text('Probability & uncertainty'),subtitle:Text('Past outcomes do not determine the next outcome.'))),
-        Card(color:panel,child:ListTile(leading:Icon(Icons.shield_outlined,color:accent),title:Text('Risk management'),subtitle:Text('Avoid guaranteed-profit claims and borrowing to speculate.'))),
-        Card(color:panel,child:ListTile(leading:Icon(Icons.menu_book_outlined,color:accent),title:Text('Learning plan'),subtitle:Text('Terminology, risk, diversification and source verification.'))),
-      ]),
+      learningPage(),
       resultsPage(),
       notificationsPage(),
       ListView(padding:const EdgeInsets.all(18),children:[
