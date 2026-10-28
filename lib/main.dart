@@ -192,8 +192,28 @@ class _AdminPanelState extends State<AdminPanel> {
   Future<void> saveNotice() async {
     if(noticeTitle.text.trim().isEmpty||noticeBody.text.trim().isEmpty){message('Title और message भरें।');return;}
     setState(()=>busy=true);
-    try{await widget.client.from('app_notifications').insert({'title':noticeTitle.text.trim(),'body':noticeBody.text.trim(),'audience':'all'});noticeTitle.clear();noticeBody.clear();message('Announcement publish हो गया।');}
-    catch(e){message('Save नहीं हुआ। Admin role और database schema जाँचें।');}
+    final title=noticeTitle.text.trim(), body=noticeBody.text.trim();
+    try{
+      await widget.client.from('app_notifications').insert({'title':title,'body':body,'audience':'all'});
+      noticeTitle.clear();noticeBody.clear();
+      // In-app announcement is saved first. Push is best-effort and requires
+      // the separately deployed Edge Function plus registered Firebase tokens.
+      try{
+        final pushed=await widget.client.functions.invoke('send-push',body: {'title':title,'body':body});
+        if(pushed.status>=200 && pushed.status<300){
+          final data=pushed.data;
+          if(data is Map && data['sent'] is num && (data['sent'] as num)>0){
+            message('Announcement publish हुआ। Push भेजे गए: ${data['sent']}');
+          }else{
+            message('Announcement publish हुआ। Push setup है, लेकिन अभी registered devices नहीं मिले।');
+          }
+        }else{
+          message('Announcement publish हुआ। Push अभी configured/deployed नहीं है।');
+        }
+      }catch(_){
+        message('Announcement publish हुआ। In-app notification उपलब्ध है; push के लिए Firebase setup बाकी है।');
+      }
+    }catch(e){message('Save नहीं हुआ। Admin role और database schema जाँचें।');}
     finally{if(mounted)setState(()=>busy=false);}
   }
   Future<void> saveResult() async {
