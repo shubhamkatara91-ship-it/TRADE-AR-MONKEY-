@@ -71,7 +71,14 @@ Deno.serve(async (req) => {
   const serviceAccountRaw = Deno.env.get("FCM_SERVICE_ACCOUNT_JSON");
   if (!serviceAccountRaw) return response({ error: "Push is not configured: FCM service account secret is missing" }, 503);
 
-  const { data: rows, error: tokenError } = await db
+  // Use the server-side service role only after the caller has been verified as an admin.
+  // This is necessary because a user's JWT can only read that user's own device tokens.
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!serviceRoleKey) return response({ error: "Server-side Supabase service-role secret is missing" }, 500);
+  const serverDb = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data: rows, error: tokenError } = await serverDb
     .from("device_push_tokens").select("token").eq("enabled", true).limit(500);
   if (tokenError) return response({ error: "Could not load registered devices" }, 500);
   if (!rows?.length) return response({ sent: 0, failed: 0, message: "No registered device tokens yet" });
