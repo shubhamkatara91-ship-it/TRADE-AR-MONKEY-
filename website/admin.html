@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TRADE AR MONEY Admin</title>
+<style>
+:root{color-scheme:dark;--bg:#0e1712;--panel:#18251c;--green:#9be7a5;--line:#2c4031}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f3f7f3;font:16px/1.5 system-ui,sans-serif}main{max-width:850px;margin:auto;padding:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin:14px 0}input,textarea,button{display:block;width:100%;font:inherit;padding:11px;margin:8px 0 14px;border-radius:9px;border:1px solid var(--line);background:#0e1712;color:white}textarea{min-height:100px}button{background:var(--green);color:#102014;font-weight:700;cursor:pointer}small,p{color:#b7c6ba}a{color:var(--green)}[hidden]{display:none!important}</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><main>
+<h1>TRADE AR MONEY — Admin</h1><p>Only authorized Supabase admins can publish. Database row-level security is enforced on every write.</p>
+<section class="card"><h2>Sign in</h2><label>Email<input id="email" type="email" autocomplete="username"></label><label>Password<input id="password" type="password" autocomplete="current-password"></label><button id="login">Log in</button><button id="logout" hidden>Log out</button><p id="auth-status" role="status">Checking configuration…</p></section>
+<div id="tools" hidden>
+<section class="card"><h2>Publish learning article</h2><input id="article-title" placeholder="Title"><input id="article-category" placeholder="Category" value="Basics"><textarea id="article-body" placeholder="Learning content"></textarea><button id="publish-article">Publish article</button></section>
+<section class="card"><h2>Publish announcement</h2><input id="notice-title" placeholder="Title"><textarea id="notice-body" placeholder="Announcement"></textarea><button id="publish-notice">Publish announcement</button></section>
+<section class="card"><h2>Add verified history record</h2><input id="result-source" placeholder="Authorized source"><input id="result-label" placeholder="Result label"><input id="result-value" placeholder="Result value (optional)"><button id="publish-result">Save verified record</button><p>Manual verified records only. No live results API is connected.</p></section>
+</div><p><a href="./index.html">Back to website</a></p></main>
+<script>
+(function(){
+const URL='https://sjpgqjxllpjqwsllrzya.supabase.co',KEY='sb_publishable_VUzeFLr_Da61_gz_D6i1GA_1TMv5Seh';
+const $=id=>document.getElementById(id);
+if(!window.supabase){$('auth-status').textContent='Supabase library failed to load.';return;}
+const db=window.supabase.createClient(URL,KEY);
+async function refresh(){const {data}=await db.auth.getSession();const u=data.session?.user;$('logout').hidden=!u;$('login').hidden=!!u;if(!u){$('tools').hidden=true;$('auth-status').textContent='Sign in with your account.';return;}const p=await db.from('profiles').select('role').eq('id',u.id).maybeSingle();const admin=!p.error&&p.data?.role==='admin';$('tools').hidden=!admin;$('auth-status').textContent=admin?'Admin verified.': 'This account does not have admin access.';}
+$('login').onclick=async()=>{const {error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('auth-status').textContent=error?error.message:'Signed in.';await refresh();};
+$('logout').onclick=async()=>{await db.auth.signOut();await refresh();};
+async function save(table,row){$('auth-status').textContent='Saving…';const {error}=await db.from(table).insert(row);$('auth-status').textContent=error?'Save failed: '+error.message:'Saved successfully.';}
+$('publish-article').onclick=()=>{const title=$('article-title').value.trim(),body=$('article-body').value.trim();if(!title||!body){$('auth-status').textContent='Title and content required.';return;}save('learning_articles',{title,body,category:$('article-category').value.trim()||'Basics',published:true});};
+$('publish-notice').onclick=()=>{const title=$('notice-title').value.trim(),body=$('notice-body').value.trim();if(!title||!body){$('auth-status').textContent='Title and message required.';return;}save('app_notifications',{title,body,audience:'all'});};
+$('publish-result').onclick=()=>{const source=$('result-source').value.trim(),result_label=$('result-label').value.trim(),result_value=$('result-value').value.trim();if(!source||!result_label){$('auth-status').textContent='Source and result label required.';return;}save('result_history',{source,result_label,result_value:result_value||null,observed_at:new Date().toISOString()});};
+db.auth.onAuthStateChange(()=>refresh());refresh();
+})();
+</script></body></html>
