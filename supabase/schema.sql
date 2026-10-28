@@ -26,7 +26,7 @@ create table if not exists public.result_history (
 );
 alter table public.result_history enable row level security;
 drop policy if exists "Authenticated users can read result history" on public.result_history;
-create policy "Authenticated users can read result history" on public.result_history for select to authenticated using(true);
+create policy "Anyone can read result history" on public.result_history for select to anon, authenticated using(true);
 drop policy if exists "Admins can manage result history" on public.result_history;
 create policy "Admins can manage result history" on public.result_history for all to authenticated using(public.is_admin()) with check(public.is_admin());
 
@@ -37,7 +37,9 @@ create table if not exists public.app_notifications (
 );
 alter table public.app_notifications enable row level security;
 drop policy if exists "Users can read public notifications" on public.app_notifications;
-create policy "Users can read public notifications" on public.app_notifications for select to authenticated using(audience='all' or (audience='admins' and public.is_admin()) or (audience='users' and not public.is_admin()));
+create policy "Public notifications are readable by anyone" on public.app_notifications for select to anon using(audience='all');
+drop policy if exists "Users can read public notifications" on public.app_notifications;
+create policy "Users can read audience notifications" on public.app_notifications for select to authenticated using(audience='all' or (audience='admins' and public.is_admin()) or (audience='users' and not public.is_admin()));
 drop policy if exists "Admins can manage notifications" on public.app_notifications;
 create policy "Admins can manage notifications" on public.app_notifications for all to authenticated using(public.is_admin()) with check(public.is_admin());
 
@@ -51,7 +53,7 @@ drop policy if exists "Users can read published learning articles" on public.lea
 create policy "Users can read published learning articles" on public.learning_articles for select to authenticated using(published=true);
 drop policy if exists "Admins can manage learning articles" on public.learning_articles;
 create policy "Admins can manage learning articles" on public.learning_articles for all to authenticated using(public.is_admin()) with check(public.is_admin());
-grant select on public.result_history, public.app_notifications, public.learning_articles to authenticated;
+grant select on public.result_history, public.app_notifications, public.learning_articles to anon, authenticated;
 grant insert, update, delete on public.result_history, public.app_notifications, public.learning_articles to authenticated;
 grant usage, select on sequence public.result_history_id_seq, public.app_notifications_id_seq, public.learning_articles_id_seq to authenticated;
 
