@@ -41,7 +41,7 @@ jobs:
               parser = CheckHTML(convert_charrefs=True)
               parser.feed(source)
               parser.close()
-              scripts = re.findall(r"<script(?![^>]*\\bsrc=)[^>]*>(.*?)</script\\s*>", source, re.I | re.S)
+              scripts = re.findall(r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script\s*>", source, re.I | re.S)
               for index, script in enumerate(scripts):
                   if not script.strip():
                       continue
