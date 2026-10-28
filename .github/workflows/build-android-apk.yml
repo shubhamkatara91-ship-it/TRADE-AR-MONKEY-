@@ -27,7 +27,7 @@ jobs:
         run: |
           cp -R lib build_scaffold/
           cp pubspec.yaml build_scaffold/
-          sed -i 's/android:label="build_scaffold"/android:label="TRADE AR MONEY"/' build_scaffold/android/app/src/main/AndroidManifest.xml
+          sed -i 's/android:label="[^"]*"/android:label="TRADE AR MONEY"/' build_scaffold/android/app/src/main/AndroidManifest.xml
       - name: Resolve dependencies
         working-directory: build_scaffold
         run: flutter pub get
