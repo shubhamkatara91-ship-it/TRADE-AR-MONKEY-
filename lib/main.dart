@@ -163,22 +163,23 @@ class AdminPanel extends StatefulWidget {
   @override State<AdminPanel> createState()=>_AdminPanelState();
 }
 class _AdminPanelState extends State<AdminPanel> {
-  final title=TextEditingController(),body=TextEditingController(),category=TextEditingController(text:'Basics');
+  final articleTitle=TextEditingController(),articleBody=TextEditingController(),category=TextEditingController(text:'Basics');
+  final noticeTitle=TextEditingController(),noticeBody=TextEditingController();
   final source=TextEditingController(),resultLabel=TextEditingController(),resultValue=TextEditingController();
   bool busy=false;
-  @override void dispose(){title.dispose();body.dispose();category.dispose();source.dispose();resultLabel.dispose();resultValue.dispose();super.dispose();}
+  @override void dispose(){articleTitle.dispose();articleBody.dispose();noticeTitle.dispose();noticeBody.dispose();category.dispose();source.dispose();resultLabel.dispose();resultValue.dispose();super.dispose();}
   void message(String s){if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(s)));}
   Future<void> saveArticle() async {
-    if(title.text.trim().isEmpty||body.text.trim().isEmpty){message('Title और content भरें।');return;}
+    if(articleTitle.text.trim().isEmpty||articleBody.text.trim().isEmpty){message('Title और content भरें।');return;}
     setState(()=>busy=true);
-    try{await widget.client.from('learning_articles').insert({'title':title.text.trim(),'body':body.text.trim(),'category':category.text.trim().isEmpty?'Basics':category.text.trim(),'published':true});title.clear();body.clear();message('Learning article publish हो गया।');}
+    try{await widget.client.from('learning_articles').insert({'title':articleTitle.text.trim(),'body':articleBody.text.trim(),'category':category.text.trim().isEmpty?'Basics':category.text.trim(),'published':true});articleTitle.clear();articleBody.clear();message('Learning article publish हो गया।');}
     catch(e){message('Save नहीं हुआ। Admin role और database schema जाँचें।');}
     finally{if(mounted)setState(()=>busy=false);}
   }
   Future<void> saveNotice() async {
-    if(title.text.trim().isEmpty||body.text.trim().isEmpty){message('Title और message भरें।');return;}
+    if(noticeTitle.text.trim().isEmpty||noticeBody.text.trim().isEmpty){message('Title और message भरें।');return;}
     setState(()=>busy=true);
-    try{await widget.client.from('app_notifications').insert({'title':title.text.trim(),'body':body.text.trim(),'audience':'all'});title.clear();body.clear();message('Announcement publish हो गया।');}
+    try{await widget.client.from('app_notifications').insert({'title':noticeTitle.text.trim(),'body':noticeBody.text.trim(),'audience':'all'});noticeTitle.clear();noticeBody.clear();message('Announcement publish हो गया।');}
     catch(e){message('Save नहीं हुआ। Admin role और database schema जाँचें।');}
     finally{if(mounted)setState(()=>busy=false);}
   }
@@ -195,11 +196,11 @@ class _AdminPanelState extends State<AdminPanel> {
     const Text('Admin tools are protected by Supabase Row Level Security. Publish only accurate, authorized information.',style:TextStyle(color:Colors.white70)),
     const SizedBox(height:12),
     section('Publish learning article',Icons.menu_book,[
-      field(title,'Article title'),field(category,'Category'),field(body,'Article content',lines:5),
+      field(articleTitle,'Article title'),field(category,'Category'),field(articleBody,'Article content',lines:5),
       SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:saveArticle,child:const Text('Publish article')))
     ]),
     section('Publish announcement',Icons.notifications_active,[
-      field(title,'Announcement title'),field(body,'Message',lines:3),
+      field(noticeTitle,'Announcement title'),field(noticeBody,'Message',lines:3),
       SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:saveNotice,child:const Text('Publish to all users')))
     ]),
     section('Add verified result record',Icons.fact_check,[
