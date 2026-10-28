@@ -1,0 +1,32 @@
+name: Build TRADE AR MONEY APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate Android project
+        run: flutter create --platforms=android --project-name trade_ar_money build_scaffold
+      - name: Copy app source
+        run: |
+          cp -R lib build_scaffold/
+          cp pubspec.yaml build_scaffold/
+      - name: Resolve dependencies
+        working-directory: build_scaffold
+        run: flutter pub get
+      - name: Build release APK
+        working-directory: build_scaffold
+        run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TRADE-AR-MONEY-release-apk
+          path: build_scaffold/build/app/outputs/flutter-apk/app-release.apk
