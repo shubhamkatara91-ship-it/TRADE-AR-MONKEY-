@@ -69,3 +69,6 @@ Repository includes `supabase/functions/send-push/index.ts`, a server-side funct
 5. Invoke `send-push` from the admin announcement flow only after Firebase configuration and token registration are implemented. Test on a real Android device, including background/locked states.
 
 Important: the server function is a secured foundation, not a claim that push already works. The current app does not yet initialize Firebase or register device tokens, so there are no push recipients until those client steps are completed. Never commit the Firebase service account JSON.
+
+## G. Browser admin page
+The static website now includes `website/admin.html`. After the site is deployed, open `/admin.html`, sign in with the admin account, and publish articles, announcements, or manually verified history records. The page checks `profiles.role`; Supabase RLS must still be enabled and the schema must be applied. This page does not create an admin account or connect a live results provider.
