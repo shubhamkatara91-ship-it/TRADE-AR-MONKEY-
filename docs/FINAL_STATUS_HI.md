@@ -1,28 +1,37 @@
-# TRADE AR MONEY — Final readiness checklist (Hindi)
+# TRADE AR MONEY — वर्तमान स्थिति और release readiness
 
-यह फाइल repository में मौजूद code और उपलब्ध GitHub Actions परिणामों की स्थिति बताती है। इसे वास्तविक backend/device test का विकल्प न समझें।
+यह रिपोर्ट repository code और उपलब्ध GitHub Actions परिणामों पर आधारित है। यह वास्तविक Supabase backend या physical Android device पर परीक्षण का दावा नहीं करती।
 
-## जो code मौजूद है
-- Android Flutter client और successful release build.
-- Email/password signup, login, password reset, logout.
-- Learning articles, announcements, result-history list.
-- Role-based admin UI for articles, announcements, and manually verified history.
-- Browser website और admin page.
-- Supabase SQL schema with Row Level Security policies.
-- Admin-only server-side FCM Edge Function foundation.
+## तैयार code
+- Flutter Android app: email/password signup, login, password reset, logout.
+- Learning articles, announcements, result-history feed, Telegram support link.
+- Android admin screen और browser admin page: article/announcement publish तथा verified history record entry.
+- Supabase schema with RLS policies and Realtime for in-app announcements.
+- Browser website source in `website/`.
+- Server-side FCM Edge Function foundation in `supabase/functions/send-push/index.ts`.
+- Hindi setup instructions and release checklist.
 
-## जो अभी verified/live नहीं है
-1. **Website public deployment:** GitHub Actions run #11 failed at `actions/configure-pages` with `Resource not accessible by integration`. The GitHub integration does not have permission to create the repository's Pages site.
-2. **Supabase:** the SQL file is committed but we have not confirmed it was executed against the real project or smoke-tested.
-3. **First admin:** one intended account must be assigned admin role through the Supabase SQL Editor; never expose an admin-role update endpoint.
-4. **Android push:** Firebase Android setup, token registration in the app, and Edge Function secrets are not yet configured end-to-end.
-5. **Live results:** no documented/authorized results API is connected. The app must not fabricate a live feed.
+## Android APK build
+- GitHub Actions Android build #19 **successful**.
+- Build run: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40747801664
+- Download: open the run, open **Artifacts**, download `TRADE-AR-MONEY-release-apk` ZIP, then extract the APK.
+- APK artifact is the Android source build from the successful run. Changes since that run affect documentation and the website deployment workflow, not Flutter app source.
 
-## Required owner-side actions to reach production
-1. Open [GitHub Pages settings](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages), choose **GitHub Actions** as the deployment source, save, then rerun the website deployment workflow.
-2. Run the complete `supabase/schema.sql` in the matching Supabase project's SQL Editor.
-3. Set up the first admin as described in [NOTIFICATIONS_SETUP_HI.md](NOTIFICATIONS_SETUP_HI.md).
-4. Perform real signup/login/admin-vs-user/RLS tests on Android and website.
-5. If lock-screen push is required, configure Firebase and secrets following the notification guide, then test on a physical Android device.
+## अभी भी blocked / unverified
+1. **Website deployment:** latest run #14 failed in `actions/configure-pages` because GitHub integration cannot create the repository Pages site. Latest run: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40750362033
+2. **Supabase schema:** `supabase/schema.sql` is committed, but its execution against the live project and live RLS behavior have not been verified.
+3. **First admin:** the intended owner account must be assigned `role='admin'` in Supabase SQL Editor.
+4. **Push notifications:** Firebase Android setup, device-token registration, FCM secret, Edge Function deployment and physical-device delivery test are not complete.
+5. **Live results:** no documented/authorized external live-results API is connected. No live results or guaranteed predictions are generated.
+6. **Legal pages:** privacy policy and terms are drafts; owner contact details and legal review remain required before public launch.
 
-These last items require access to the owner's GitHub repository settings, Supabase dashboard, and Firebase project. They cannot be truthfully marked complete by changing repository source code alone.
+## Required owner-side actions
+1. Enable Pages once at https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages: choose **Build and deployment → Source → GitHub Actions**, save, then rerun the website workflow from https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions.
+2. Run the full `supabase/schema.sql` in the matching Supabase project's SQL Editor.
+3. Create/confirm the owner account, then assign its UUID the admin role using the reviewed SQL in [NOTIFICATIONS_SETUP_HI.md](NOTIFICATIONS_SETUP_HI.md).
+4. Run signup/login/reset, admin-vs-user and direct RLS denial tests on the real backend.
+5. For lock-screen notifications, configure Firebase and server-side secrets, deploy the Edge Function, and test on a physical Android device.
+6. Add a monitored owner/support contact and review the privacy/terms drafts before publishing.
+
+## Scope and safety
+TRADE AR MONEY is an educational/community app. It does not include betting, gambling, real-money prediction payments, or a fabricated live-results feed. The repository code cannot itself grant the connected GitHub integration missing repository-settings permission or confirm external dashboard configuration; those steps are explicitly listed above rather than marked complete.
