@@ -88,3 +88,24 @@ end $$;
 -- Explicit grants for the app's public read surfaces.
 grant select on public.result_history, public.learning_articles to anon, authenticated;
 grant select on public.app_notifications to anon, authenticated;
+
+
+-- FCM device-token registry for future server-side push delivery.
+-- Tokens are tied to the signed-in user and cannot be listed by other users.
+create table if not exists public.device_push_tokens (
+  id bigint generated always as identity primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  token text not null unique,
+  platform text not null check (platform in ('android','ios','web')),
+  enabled boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.device_push_tokens enable row level security;
+drop policy if exists "Users manage own push tokens" on public.device_push_tokens;
+create policy "Users manage own push tokens" on public.device_push_tokens
+  for all to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+grant select, insert, update, delete on public.device_push_tokens to authenticated;
+grant usage, select on sequence public.device_push_tokens_id_seq to authenticated;
