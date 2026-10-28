@@ -13,3 +13,11 @@ GitHub Actions runs on push to main or manually from Actions. Open the successfu
 
 ## Important status
 Live game/colour-prediction feeds are not connected. The app does not fabricate live outcomes or guarantee predictions. Connect only an API you own or are explicitly authorized to use, with documented response formats. Historical data cannot guarantee future outcomes.
+
+## Website
+A responsive static website is in `website/index.html`. It uses the same Supabase project for published learning articles, public announcements, and verified history, and supports email/password sign-up, login, password reset, and logout. It does not include betting, real-money prediction, or an automatic live-results feed.
+
+The GitHub Pages workflow is `.github/workflows/deploy-website.yml`. After Pages deployment succeeds, use the page URL shown in the workflow run. The repository owner may need to allow GitHub Pages in **Settings → Pages** if organization or repository policy prevents automatic enablement.
+
+## Database setup
+Run all SQL in `supabase/schema.sql` from the matching Supabase project's SQL Editor. Then follow `docs/SUPABASE_SETUP_HI.md` to assign the first admin account securely. The app and website are not production-ready until the database and account flows have been tested.
