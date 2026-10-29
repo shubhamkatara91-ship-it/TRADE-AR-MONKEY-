@@ -68,3 +68,31 @@ jobs:
               raise SystemExit("Do not put a Supabase service-role key in the Flutter client.")
           print("Schema access-control markers checked; no service-role reference in Flutter client.")
           PY
+
+      - name: Check public-site and admin safety guardrails
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          site = Path("website/index.html").read_text(encoding="utf-8")
+          admin = Path("website/admin.html").read_text(encoding="utf-8")
+          schema = Path("supabase/schema.sql").read_text(encoding="utf-8").lower()
+
+          checks = {
+              "public content is HTML-escaped": "const safe=s=>String(s??'').replace" in site,
+              "public auth refresh is deferred": "db.auth.onAuthStateChange(()=>{setTimeout(" in site,
+              "practice mode is clearly labeled": "Practice only: this does not connect to Mark Pro" in site,
+              "public page discloses no live results API": "No live results API is connected" in site,
+              "admin role is checked from profile": "p.data?.role==='admin'" in admin,
+              "admin tools hidden without authorization": "$('tools').hidden=!admin" in admin,
+              "admin writes are described as RLS protected": "Database row-level security is enforced on every write" in admin,
+              "result history writes require admin": 'create policy "admins can manage result history" on public.result_history for all to authenticated using(public.is_admin()) with check(public.is_admin());' in schema,
+              "article writes require admin": 'create policy "admins can manage learning articles" on public.learning_articles for all to authenticated using(public.is_admin()) with check(public.is_admin());' in schema,
+              "notification writes require admin": 'create policy "admins can manage notifications" on public.app_notifications for all to authenticated using(public.is_admin()) with check(public.is_admin());' in schema,
+          }
+          failed = [label for label, ok in checks.items() if not ok]
+          for label, ok in checks.items():
+              print(("PASS" if ok else "FAIL") + ": " + label)
+          if failed:
+              raise SystemExit("Safety guardrail checks failed: " + ", ".join(failed))
+          PY
