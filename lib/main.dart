@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
     const SizedBox(height:18),
     Card(color:panel,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(18),side:const BorderSide(color:accent,width:1)),child:ListTile(
       contentPadding:const EdgeInsets.symmetric(horizontal:18,vertical:16),
-      leading:Container(width:52,height:52,decoration:BoxDecoration(color:accent.withValues(alpha:0.12),borderRadius:BorderRadius.circular(14)),child:const Icon(Icons.bolt,color:accent,size:30)),
+      leading:Container(width:52,height:52,decoration:BoxDecoration(color:accent.withOpacity(0.12),borderRadius:BorderRadius.circular(14)),child:const Icon(Icons.bolt,color:accent,size:30)),
       title:const Text('ARG V1',style:TextStyle(fontSize:20,fontWeight:FontWeight.w900)),
       subtitle:const Padding(padding:EdgeInsets.only(top:6),child:Text('WinGo • 1 Minute • BIG / SMALL practice')),
       trailing:const Icon(Icons.arrow_forward_ios,size:17,color:accent),
