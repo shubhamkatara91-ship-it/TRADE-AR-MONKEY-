@@ -244,10 +244,12 @@ class ArgV1Page extends StatefulWidget {
 }
 class _ArgV1PageState extends State<ArgV1Page> {
   int remaining=60-DateTime.now().second;
-  int round=DateTime.now().millisecondsSinceEpoch~/60000;
+  String round=_localPeriodId(DateTime.now());
   String? selected;
   final List<String> practiceHistory=[];
   Timer? ticker;
+  static String _localPeriodId(DateTime time) =>
+      '${time.year.toString().padLeft(4,'0')}${time.month.toString().padLeft(2,'0')}${time.day.toString().padLeft(2,'0')}${time.hour.toString().padLeft(2,'0')}${time.minute.toString().padLeft(2,'0')}';
   @override void initState(){
     super.initState();
     _syncRoundClock();
@@ -258,7 +260,7 @@ class _ArgV1PageState extends State<ArgV1Page> {
   }
   void _syncRoundClock(){
     final now=DateTime.now();
-    final currentRound=now.millisecondsSinceEpoch~/60000;
+    final currentRound=_localPeriodId(now);
     final nextRemaining=60-now.second;
     if(currentRound!=round){
       setState((){
@@ -273,7 +275,7 @@ class _ArgV1PageState extends State<ArgV1Page> {
   @override void dispose(){ticker?.cancel();super.dispose();}
   void choose(String value){
     setState(()=>selected=value);
-    practiceHistory.insert(0,'Round $round • Practice choice: $value');
+    practiceHistory.insert(0,'Period $round • Practice choice: $value');
     if(practiceHistory.length>10)practiceHistory.removeLast();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('$value selected for practice only. No result prediction was made.')));
   }
@@ -283,7 +285,7 @@ class _ArgV1PageState extends State<ArgV1Page> {
       Container(padding:const EdgeInsets.all(22),decoration:BoxDecoration(color:panel,borderRadius:BorderRadius.circular(20)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
         const Text('ARG V1 • 1-MINUTE ROUND',style:TextStyle(color:accent,fontWeight:FontWeight.bold)),
         const SizedBox(height:8),Text((remaining ~/ 60).toString().padLeft(2,'0') + ':' + (remaining % 60).toString().padLeft(2,'0'),style:const TextStyle(fontSize:42,fontWeight:FontWeight.w900)),
-        Text('Local minute period $round',style:const TextStyle(color:Colors.white70)),
+        Text('Local practice period: $round',style:const TextStyle(color:Colors.white70)),
       ])),
       const SizedBox(height:10),
       Card(color:panel,child:const ListTile(
