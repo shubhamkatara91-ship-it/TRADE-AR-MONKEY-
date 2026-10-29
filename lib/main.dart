@@ -512,6 +512,9 @@ class _AutoBetPracticePageState extends State<AutoBetPracticePage> {
     2000: [40, 92, 212, 488, 1123],
   };
   int capital = 300, targetPercent = 15, maxLevel = 5, level = 1;
+  int roundNumber = 1, roundSecondsRemaining = 60;
+  Timer? roundTimer;
+  bool outcomeLoggedThisRound = false;
   double practicePnl = 0;
   bool running = false, stopped = false;
   String stopReason = 'Practice session not started';
@@ -523,14 +526,31 @@ class _AutoBetPracticePageState extends State<AutoBetPracticePage> {
   double get progress => targetAmount <= 0 ? 0 : (practicePnl / targetAmount).clamp(0.0, 1.0);
 
   void startSession() {
+    roundTimer?.cancel();
     setState(() {
       running = true; stopped = false; level = 1; practicePnl = 0;
+      roundNumber = 1; roundSecondsRemaining = 60; outcomeLoggedThisRound = false;
       stopReason = 'Practice session running'; history.clear();
       history.insert(0, 'Practice session started • Capital reference ₹$capital • Target $targetPercent% • Practice only');
     });
+    roundTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted || !running || stopped) { timer.cancel(); return; }
+      setState(() {
+        roundSecondsRemaining--;
+        if (roundSecondsRemaining <= 0) {
+          if (!outcomeLoggedThisRound) {
+            history.insert(0, 'Practice round $roundNumber closed with no outcome recorded; P/L unchanged.');
+          }
+          roundNumber++;
+          roundSecondsRemaining = 60;
+          outcomeLoggedThisRound = false;
+        }
+      });
+    });
   }
+  @override void dispose() { roundTimer?.cancel(); super.dispose(); }
   void logOutcome(bool win) {
-    if (!running || stopped) return;
+    if (!running || stopped || outcomeLoggedThisRound) return;
     final bet = currentPracticeBet;
     if (!win && remainingCapital < bet) {
       setState(() { running = false; stopped = true; stopReason = 'Practice capital limit reached — session stopped'; history.insert(0, 'Stopped: remaining practice capital is below the Level $level stake ₹$bet.'); });
@@ -540,7 +560,8 @@ class _AutoBetPracticePageState extends State<AutoBetPracticePage> {
     final delta = win ? bet.toDouble() : -bet.toDouble();
     setState(() {
       practicePnl += delta;
-      history.insert(0, 'Level $level • Practice bet ₹$bet • ${win ? 'WIN' : 'LOSS'} • ${delta >= 0 ? '+' : '-'}₹${delta.abs().toStringAsFixed(2)} simulated P/L (illustrative 1:1)');
+      outcomeLoggedThisRound = true;
+      history.insert(0, 'Round $roundNumber • Level $level • Practice stake ₹$bet • ${win ? 'WIN' : 'LOSS'} • ${delta >= 0 ? '+' : '-'}₹${delta.abs().toStringAsFixed(2)} simulated P/L (illustrative 1:1)');
       if (practicePnl >= targetAmount) {
         running = false; stopped = true; stopReason = 'Target reached — practice stopped';
       } else if (win) {
@@ -553,6 +574,7 @@ class _AutoBetPracticePageState extends State<AutoBetPracticePage> {
       if (running && remainingCapital < currentPracticeBet) {
         running = false; stopped = true; stopReason = 'Remaining practice capital is below the next level stake — session stopped';
       }
+      if (!running || stopped) roundTimer?.cancel();
     });
   }
   @override Widget build(BuildContext context) => Scaffold(
@@ -582,6 +604,9 @@ class _AutoBetPracticePageState extends State<AutoBetPracticePage> {
       Card(color: panel, child: Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Text('Session status', style: TextStyle(fontWeight: FontWeight.bold)), const SizedBox(height: 8),
         Text(stopReason, style: TextStyle(color: stopped ? Colors.orangeAccent : accent, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 8), Text('Practice round: $roundNumber'),
+        Text('Round timer: ${roundSecondsRemaining ~/ 60}:${(roundSecondsRemaining % 60).toString().padLeft(2, '0')}'),
+        Text(outcomeLoggedThisRound ? 'This round outcome is already recorded.' : 'One practice outcome can be recorded per round.'),
         const SizedBox(height: 8), Text('Current practice level: $level / $maxLevel'),
         Text('Current practice stake: ₹$currentPracticeBet'),
         Text('Five-level plan: ${betByLevel.map((amount) => '₹$amount').join(' → ')}'),
@@ -595,9 +620,9 @@ class _AutoBetPracticePageState extends State<AutoBetPracticePage> {
       SizedBox(width: double.infinity, child: FilledButton.icon(onPressed: running ? null : startSession, icon: const Icon(Icons.play_arrow), label: Text(stopped ? 'Start new practice session' : 'Start practice session'))),
       const SizedBox(height: 8),
       Row(children: [
-        Expanded(child: OutlinedButton.icon(onPressed: running ? () => logOutcome(true) : null, icon: const Icon(Icons.check_circle_outline), label: const Text('Log practice win'))),
+        Expanded(child: OutlinedButton.icon(onPressed: running && !outcomeLoggedThisRound ? () => logOutcome(true) : null, icon: const Icon(Icons.check_circle_outline), label: const Text('Log practice win'))),
         const SizedBox(width: 8),
-        Expanded(child: OutlinedButton.icon(onPressed: running ? () => logOutcome(false) : null, icon: const Icon(Icons.cancel_outlined), label: const Text('Log practice loss'))),
+        Expanded(child: OutlinedButton.icon(onPressed: running && !outcomeLoggedThisRound ? () => logOutcome(false) : null, icon: const Icon(Icons.cancel_outlined), label: const Text('Log practice loss'))),
       ]),
       const SizedBox(height: 18), const Text('Practice history', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)), const SizedBox(height: 8),
       if (history.isEmpty) const Text('Session शुरू करने के बाद practice entries यहाँ दिखेंगी।', style: TextStyle(color: Colors.white70)),
