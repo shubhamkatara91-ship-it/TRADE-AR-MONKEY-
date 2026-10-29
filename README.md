@@ -62,3 +62,16 @@ TRADE AR MONEY is intended as an educational community, not a betting or gamblin
 
 - [Admin, Supabase, and deployment checklist](docs/ADMIN_SETUP.md)
 - [ARG V1 authorized read-only results feed setup](docs/ARG_V1_LIVE_FEED_SETUP.md)
+
+## Practice stake progression (simulator only)
+
+The Auto Bet screen is a manual-outcome simulator. It does not read a live game result, predict the next result, place bets, or move money. The displayed win/loss calculation assumes an illustrative 1:1 payout and is not a provider payout rule.
+
+| Capital reference | Level 1 | Level 2 | Level 3 | Level 4 | Level 5 | Total five-level exposure |
+|---:|---:|---:|---:|---:|---:|---:|
+| ₹300 | ₹5 | ₹12 | ₹29 | ₹70 | ₹168 | ₹284 |
+| ₹500 | ₹10 | ₹23 | ₹53 | ₹122 | ₹281 | ₹489 |
+| ₹1,000 | ₹20 | ₹46 | ₹106 | ₹244 | ₹562 | ₹998 |
+| ₹2,000 | ₹40 | ₹92 | ₹212 | ₹488 | ₹1,123 | ₹1,955 |
+
+A recorded practice win resets to Level 1; a loss advances one level. A loss at Level 5 stops the session. The simulator stops when the configured practice profit target is reached or the remaining reference capital cannot cover the next stake. These mechanics are educational bookkeeping only and do not establish a profitable strategy or predict outcomes.
