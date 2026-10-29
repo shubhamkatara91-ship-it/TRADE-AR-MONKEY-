@@ -4,11 +4,11 @@ Flutter Android app and responsive website for an educational community.
 
 ## Current verified status
 
-- **Latest confirmed successful Android APK build before the current commit:** [GitHub Actions run 40868195894](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40868195894), commit `ac8c669d3972b290f494302a81ece6509125578c`. This includes the capital-specific practice stake plans.
-- **Current APK build:** [run 40869376096](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40869376096), commit `3e059e3cef93e7f10fff8a5a08293b947099bcbd`. It adds a practice round timer and duplicate-outcome protection; do not call its artifact available until the run succeeds.
+- **Latest confirmed successful Android APK build:** [GitHub Actions run 40869376096](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40869376096), commit `3e059e3cef93e7f10fff8a5a08293b947099bcbd`. It includes the timed practice round and duplicate-outcome protection.
+- **Current ARG V1 pattern-analysis APK build:** [run 40870135212](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40870135212), commit `907987fd55175ba2e79293d77e5043aa731583b1`. It adds recent BIG/SMALL counts and streak/sample-lean display. Do not call the new artifact available until this run succeeds.
+- **Latest confirmed source validation for pattern analysis:** [run 40870135224](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40870135224). Validation is source-level, not a full Android device test.
 - **APK artifact:** `TRADE-AR-MONEY-release-apk-latest` ZIP; download from the successful run's **Artifacts** section. Build artifacts expire; use the newest successful run.
-- **Latest confirmed successful source validation:** [run 40869376091](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40869376091).
-- The current Tools section exposes ARG V1; its one-minute timer starts automatically. BIG/SMALL choices are practice selections, not verified predictions.
+- ARG V1's one-minute timer and practice outcomes are not verified predictions. The recent pattern panel summarizes only records already loaded by the configured result feed.
 - Flutter source includes email/password signup, login, password reset, logout, learning articles, result-history display, announcements, support, and role-gated admin features.
 - A responsive browser website and separate admin page are present under `website/`.
 - Supabase schema is in `supabase/schema.sql`; it must be applied and tested in the intended Supabase project before launch.
