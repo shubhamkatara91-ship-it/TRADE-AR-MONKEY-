@@ -34,7 +34,7 @@
  const shareButton=$('share-app');if(shareButton)shareButton.addEventListener('click',shareApp); let argRemaining=60,argRound=1;const argHistory=[];const argTimer=$('arg-timer');const argRoundEl=$('arg-round');
  function renderArgTimer(){if(argTimer)argTimer.textContent='00:'+String(argRemaining).padStart(2,'0');if(argRoundEl)argRoundEl.textContent=String(argRound);}
  if(argTimer){renderArgTimer();setInterval(()=>{argRemaining--;if(argRemaining<=0){argRemaining=60;argRound++;}renderArgTimer();},1000);}
- function chooseArg(value){argHistory.unshift('Round '+argRound+' · Practice choice: '+value);if(argHistory.length>10)argHistory.pop();$('arg-choice').textContent='Selected '+value+' for practice only. No prediction was made.';$('arg-history').innerHTML=argHistory.map(x=>'<article class="entry">'+safe(x)+'</article>').join('');}
+ function chooseArg(value){argHistory.unshift('Round '+argRound+' · Practice choice: '+value);if(argHistory.length>10)argHistory.pop();$('arg-choice').textContent='Selected '+value+' for practice only. No prediction was made.';$('arg-history').textContent=argHistory.join('\n');}
  $('arg-big')?.addEventListener('click',()=>chooseArg('BIG'));$('arg-small')?.addEventListener('click',()=>chooseArg('SMALL'));
 const heroShare=$('share-hero');if(heroShare)heroShare.addEventListener('click',shareApp);
  if(!window.supabase){status('Content service library did not load. Check internet and reload.');return;}
