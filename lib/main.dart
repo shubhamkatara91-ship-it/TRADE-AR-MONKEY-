@@ -177,7 +177,6 @@ class _HomePageState extends State<HomePage> {
     Card(color:panel,child:const ListTile(leading:Icon(Icons.calculate_outlined,color:accent),title:Text('Basic calculation'),subtitle:Text('Net P/L = total realized gains − total realized losses − fees. Include only completed, verifiable transactions.'))),
     Card(color:panel,child:const ListTile(leading:Icon(Icons.shield_outlined,color:accent),title:Text('Risk reminder'),subtitle:Text('Past performance does not guarantee future results. Never treat random outcomes as guaranteed profit.'))),
     const SizedBox(height:8),
-    SizedBox(width:double.infinity,child:OutlinedButton.icon(onPressed:()=>setState(()=>tab=2),icon:const Icon(Icons.history),label:const Text('Open Results History'))),
   ]);
   Widget insightsPage()=>ListView(padding:const EdgeInsets.all(18),children:[
     const Text('AI & MARKET INSIGHTS',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
@@ -307,10 +306,7 @@ class _HomePageState extends State<HomePage> {
         body:pages[5],
       );
     }
-    return Scaffold(appBar:AppBar(title:const Text('TRADE AR MONEY',style:TextStyle(fontWeight:FontWeight.w900)),actions:[
-      IconButton(onPressed:()=>setState(()=>tab=3),tooltip:'Notifications',icon:const Icon(Icons.notifications_outlined,color:accent)),
-      IconButton(onPressed:shareApp,tooltip:'Share app',icon:const Icon(Icons.share_outlined,color:accent)),
-      IconButton(onPressed:support,tooltip:'Telegram Support',icon:const Icon(Icons.support_agent,color:accent))]),
+    return Scaffold(appBar:AppBar(title:const Text('TRADE AR MONEY',style:TextStyle(fontWeight:FontWeight.w900))),
       body:pages[tab],bottomNavigationBar:NavigationBar(backgroundColor:panel,selectedIndex:tab==0?0:tab==8?1:tab==1?2:0,onDestinationSelected:(v){
         if(v==0){setState(()=>tab=0);}
         else if(v==1){setState(()=>tab=8);}
