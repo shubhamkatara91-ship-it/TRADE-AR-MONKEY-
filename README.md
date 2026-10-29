@@ -10,7 +10,7 @@ https://t.me/+pmahyzLfcMA2ODZl
 ## Current verified status
 - Latest source validation passed in GitHub Actions run `40820147307` (HTML/inline JavaScript and schema safety/idempotency checks): https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820147307
 - Share-with-friends changes are committed. The APK build including these buttons succeeded in run `40820133635`: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820133635.
-- A follow-up build is packaging the APK with a build-info file and SHA-256 checksum in run `40821037141`: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40821037141. Wait for it to finish before using that bundle; the prior successful build artifact remains available as a fallback.
+- A follow-up build is packaging the APK with a build-info file and SHA-256 checksum in run `40821200945`: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40821200945. Wait for it to finish before using that bundle; the prior successful build artifact remains available as a fallback.
 - Flutter app source includes email/password signup, login, password reset, logout, learning articles, result-history display, announcements, and a role-gated admin interface.
 - A responsive browser website and separate admin page are present under `website/`.
 - Supabase schema and an admin-only FCM Edge Function are in the repository, but deployment/configuration of the backend and Firebase have not been confirmed.
@@ -18,7 +18,7 @@ https://t.me/+pmahyzLfcMA2ODZl
 - No authorized live results API is connected. The app must not show invented outcomes as live results.
 
 ## Download the Android APK
-Open the [latest successful build with Share buttons](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820133635), scroll to **Artifacts**, and download the APK bundle. The follow-up packaging build is tracked [here](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40821037141); once successful, use its `TRADE-AR-MONEY-release-apk-latest` artifact, which includes `TRADE-AR-MONEY.apk`, `BUILD_INFO.txt`, and `SHA256SUMS.txt`.
+Open the [latest successful build with Share buttons](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820133635), scroll to **Artifacts**, and download the APK bundle. The follow-up packaging build is tracked [here](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40821200945); once successful, use its `TRADE-AR-MONEY-release-apk-latest` artifact, which includes `TRADE-AR-MONEY.apk`, `BUILD_INFO.txt`, and `SHA256SUMS.txt`.
 
 Extract the ZIP, then install the APK on Android. The checksum can be used to verify the file was downloaded intact. This confirms compilation only; it does not prove production signing or end-to-end device/backend testing. Workflow artifacts expire.
 
