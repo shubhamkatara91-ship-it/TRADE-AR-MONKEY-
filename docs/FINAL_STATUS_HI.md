@@ -15,6 +15,7 @@
 
 ## Mark Pro APK inspection and ARG V1
 - Static inspection of the user-supplied APK confirms it is a Flutter app branded Mark Pro and contains WinGo/AI signal, prediction-tool, membership, and payment-related modules.
+- Deeper APK string inspection finds the app is compiled Flutter AOT (`libapp.so`), so UI logic and the exact ARG V1 request/response contract cannot be recovered reliably from strings alone. Embedded text mentions a `1 Minute` mode, prediction tools, a refreshable tool list, and a backend domain; this does not prove that any endpoint is public or authorized for reuse.
 - The APK contains third-party server/payment addresses, but an address embedded in an APK is not API documentation or proof of permission. No such private endpoints or credentials were copied into TRADE AR MONEY.
 - TRADE AR MONEY uses its own interface and original code. The ARG V1 screen currently provides working practice controls only; live results require an authorized, documented API and confirmed response schema.
 
