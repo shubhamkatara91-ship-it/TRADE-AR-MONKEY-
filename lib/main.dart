@@ -12,8 +12,58 @@ const accent = Color(0xFF9BE7A5), background = Color(0xFF0E1712), panel = Color(
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
-  runApp(const TradeArMoneyApp());
+  try {
+    await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+    runApp(const TradeArMoneyApp());
+  } catch (error, stackTrace) {
+    // Keep the app launchable if backend configuration/network initialization fails.
+    runApp(StartupFailureApp(message: error.toString()));
+    FlutterError.presentError(FlutterErrorDetails(
+      exception: error,
+      stack: stackTrace,
+      library: 'TRADE AR MONEY startup',
+      context: ErrorDescription('while initializing the backend'),
+    ));
+  }
+}
+
+class StartupFailureApp extends StatelessWidget {
+  const StartupFailureApp({super.key, required this.message});
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+    title: 'TRADE AR MONEY',
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData.dark(),
+    home: Scaffold(
+      backgroundColor: const Color(0xFF0E1712),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.warning_amber_rounded, size: 56, color: Colors.orangeAccent),
+                const SizedBox(height: 16),
+                const Text('TRADE AR MONEY', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 12),
+                const Text(
+                  'App खुल गया है, लेकिन backend शुरू नहीं हो पाया। Internet connection जाँचें। अगर समस्या बनी रहे, तो यह error support को भेजें:',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                SelectableText(message, textAlign: TextAlign.center),
+                const SizedBox(height: 16),
+                const Text('अभी login और online data उपलब्ध नहीं होंगे।', textAlign: TextAlign.center, style: TextStyle(color: Colors.orangeAccent)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 class TradeArMoneyApp extends StatelessWidget {
   const TradeArMoneyApp({super.key});
