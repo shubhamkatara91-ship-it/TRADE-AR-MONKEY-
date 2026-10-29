@@ -82,6 +82,11 @@ jobs:
 
           checks = {
               "public content is HTML-escaped": "const safe=s=>String(s??'').replace" in site,
+              "website login accepts existing password lengths": 'id="password" type="password" autocomplete="current-password" required' in site and 'id="password" type="password" minlength="8"' not in site,
+              "website login explains common authentication errors": "invalid login credentials" in site.lower() and "email not confirmed" in site.lower() and "too many attempts" in site.lower(),
+              "Flutter login only requires a non-empty existing password": "validator:(v)=>(v??'').isEmpty?'Password लिखें।':null" in app,
+              "Flutter signup enforces eight-character password": "if(signup && p.length<8)" in app,
+              "Flutter auth errors give actionable guidance": "invalid login credentials" in app.lower() and "email not confirmed" in app.lower() and "too many requests" in app.lower(),
               "public auth refresh is deferred": "db.auth.onAuthStateChange(()=>{setTimeout(" in site,
               "practice mode is clearly labeled": "Practice only: this does not connect to Mark Pro" in site,
               "website timer uses local minute boundaries": "const argPeriodId=now=>" in site and "argRemaining=60-argNow.getSeconds()" in site,
