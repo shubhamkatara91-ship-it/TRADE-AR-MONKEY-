@@ -58,3 +58,7 @@ The [Privacy Policy](docs/PRIVACY_POLICY.md) and [Terms of Use](docs/TERMS_OF_US
 ## Security and product scope
 
 TRADE AR MONEY is intended as an educational community, not a betting or gambling service. It does not accept wagers or promise prediction accuracy. Past results do not guarantee future outcomes. Connect only services and APIs that the owner is authorized to use.
+## Owner setup guides
+
+- [Admin, Supabase, and deployment checklist](docs/ADMIN_SETUP.md)
+- [ARG V1 authorized read-only results feed setup](docs/ARG_V1_LIVE_FEED_SETUP.md)
