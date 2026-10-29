@@ -4,7 +4,7 @@ Flutter Android app and responsive website for an educational community.
 
 ## Current verified status
 
-- **Latest confirmed successful Android APK build:** [GitHub Actions run 40869376096](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40869376096), commit `3e059e3cef93e7f10fff8a5a08293b947099bcbd`. It includes the timed practice round and duplicate-outcome protection.
+- **Latest confirmed successful Android APK build:** [GitHub Actions run 40873309005](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40873309005), commit `8e2b9279fbd4122b28a49e7ddf99282be4224393`. It includes startup failure diagnostics and a 10-second backend initialization timeout.
 - **Current ARG V1 pattern-analysis APK build:** [run 40870135212](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40870135212), commit `907987fd55175ba2e79293d77e5043aa731583b1`. It adds recent BIG/SMALL counts and streak/sample-lean display. Do not call the new artifact available until this run succeeds.
 - **Latest confirmed source validation for pattern analysis:** [run 40870135224](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40870135224). Validation is source-level, not a full Android device test.
 - **APK artifact:** `TRADE-AR-MONEY-release-apk-latest` ZIP; download from the successful run's **Artifacts** section. Build artifacts expire; use the newest successful run.
@@ -14,11 +14,11 @@ Flutter Android app and responsive website for an educational community.
 - Supabase schema is in `supabase/schema.sql`; it must be applied and tested in the intended Supabase project before launch.
 - **Website deployment is not yet verified as live.** Repository owner must first enable GitHub Pages as described below.
 - **Login validation fix:** Existing accounts are no longer blocked by the app's 8-character signup-password rule; new signups still require at least 8 characters. Website login now displays clearer messages for common authentication failures. This is code-level validation only; end-to-end login still requires testing against the configured Supabase project.
-- **Latest APK build with login fix:** [run 40871081013](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40871081013). Check its final status and Artifacts section before installing; a running build is not a downloadable APK.
+- **Latest APK build with startup diagnostics:** [run 40873309005](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40873309005). This run succeeded and its Artifacts section contains `TRADE-AR-MONEY-release-apk-latest`. The build is not yet verified on a physical phone.
 
 ## Download the Android APK
 
-1. Open the [latest successful APK run](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40868195894), or the current run above once it succeeds.
+1. Open the [latest successful APK run](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40873309005).
 2. Under **Artifacts**, download `TRADE-AR-MONEY-release-apk-latest`.
 3. Extract the ZIP and install `TRADE-AR-MONEY.apk` on Android.
 
