@@ -76,7 +76,7 @@ class TradeArMoneyApp extends StatelessWidget {
 }
 class HomePage extends StatefulWidget { const HomePage({super.key}); @override State<HomePage> createState()=>_HomePageState(); }
 class _HomePageState extends State<HomePage> {
-  int tab=0; bool busy=false, showPassword=false;
+  int tab=0; bool busy=false, showPassword=false, createMode=true;
   RealtimeChannel? _notificationChannel;
   @override void initState(){
     super.initState();
@@ -241,15 +241,24 @@ class _HomePageState extends State<HomePage> {
       ListView(padding:const EdgeInsets.all(18),children:[
         const Text('ACCOUNT',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),
         if(user==null)...[
-          const SizedBox(height:8),const Text('पहले Create Account में सभी जानकारी भरें। उसके बाद email और password से Log in करें।'),
+          const SizedBox(height:8),Text(createMode?'Create your account using all fields below.':'Log in with your registered email and password.'),
           const SizedBox(height:16),Form(key:formKey,child:Column(children:[
-            TextFormField(controller:username,autofillHints:const[AutofillHints.username],decoration:const InputDecoration(labelText:'Username'),validator:(v)=>(v??'').trim().length>=3?null:'Username कम-से-कम 3 अक्षर का होना चाहिए।'),
-            const SizedBox(height:12),TextFormField(controller:email,keyboardType:TextInputType.emailAddress,autofillHints:const[AutofillHints.email],decoration:const InputDecoration(labelText:'Email ID'),validator:(v){final x=(v??'').trim();return x.contains('@')&&x.contains('.')?null:'सही email लिखें।';}),
-            const SizedBox(height:12),TextFormField(controller:mobile,keyboardType:TextInputType.phone,autofillHints:const[AutofillHints.telephoneNumber],decoration:const InputDecoration(labelText:'Mobile Number'),validator:(v){final n=(v??'').trim().replaceAll('+','');return n.length>=10&&n.length<=15&&n.split('').every((c)=>'0123456789'.contains(c))?null:'10 से 15 digits का mobile number लिखें।';}),
-            const SizedBox(height:12),TextFormField(controller:password,obscureText:!showPassword,autofillHints:const[AutofillHints.newPassword],decoration:InputDecoration(labelText:'Password (minimum 8 characters)',suffixIcon:IconButton(onPressed:()=>setState(()=>showPassword=!showPassword),icon:Icon(showPassword?Icons.visibility_off:Icons.visibility))),validator:(v)=>(v??'').length>=8?null:'Password कम-से-कम 8 अक्षर का होना चाहिए।'),
-            const SizedBox(height:12),TextFormField(controller:confirmPassword,obscureText:!showPassword,decoration:const InputDecoration(labelText:'Confirm Password'),validator:(v)=>(v??'')==password.text?null:'दोनों password match होने चाहिए।'),
-            const SizedBox(height:14),SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:()=>auth(true),child:Text(busy?'Please wait…':'Create Account'))),
-            SizedBox(width:double.infinity,child:OutlinedButton(onPressed:busy?null:()=>auth(false),child:const Text('Log in'))),
+            if(createMode)...[
+              TextFormField(controller:username,autofillHints:const[AutofillHints.username],decoration:const InputDecoration(labelText:'Username'),validator:(v)=>(v??'').trim().length>=3?null:'Username कम-से-कम 3 अक्षर का होना चाहिए।'),
+              const SizedBox(height:12),
+              TextFormField(controller:mobile,keyboardType:TextInputType.phone,autofillHints:const[AutofillHints.telephoneNumber],decoration:const InputDecoration(labelText:'Mobile Number'),validator:(v){final n=(v??'').trim().replaceAll('+','');return n.length>=10&&n.length<=15&&n.split('').every((c)=>'0123456789'.contains(c))?null:'10 से 15 digits का mobile number लिखें।';}),
+              const SizedBox(height:12),
+            ],
+            TextFormField(controller:email,keyboardType:TextInputType.emailAddress,autofillHints:const[AutofillHints.email],decoration:const InputDecoration(labelText:'Email ID'),validator:(v){final x=(v??'').trim();return x.contains('@')&&x.contains('.')?null:'सही email लिखें।';}),
+            const SizedBox(height:12),
+            TextFormField(controller:password,obscureText:!showPassword,autofillHints:const[AutofillHints.newPassword],decoration:InputDecoration(labelText:createMode?'Password (minimum 8 characters)':'Password',suffixIcon:IconButton(onPressed:()=>setState(()=>showPassword=!showPassword),icon:Icon(showPassword?Icons.visibility_off:Icons.visibility))),validator:(v)=>createMode?(v??'').length>=8?null:'Password कम-से-कम 8 अक्षर का होना चाहिए。':(v??'').isNotEmpty?null:'Password लिखें।'),
+            if(createMode)...[
+              const SizedBox(height:12),
+              TextFormField(controller:confirmPassword,obscureText:!showPassword,decoration:const InputDecoration(labelText:'Confirm Password'),validator:(v)=>(v??'')==password.text?null:'दोनों password match होने चाहिए।'),
+            ],
+            const SizedBox(height:14),
+            SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:()=>auth(createMode),child:Text(busy?'Please wait…':createMode?'Create Account':'Log in'))),
+            TextButton(onPressed:()=>setState(()=>createMode=!createMode),child:Text(createMode?'Already have an account? Log in':'New here? Create account')),
             TextButton(onPressed:busy?null:resetPassword,child:const Text('Forgot password?')),
           ])),
         ]else ...[
