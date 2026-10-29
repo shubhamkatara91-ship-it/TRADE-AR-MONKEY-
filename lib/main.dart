@@ -87,14 +87,20 @@ class _HomePageState extends State<HomePage> {
     return List<Map<String,dynamic>>.from(r);
   }
   Widget toolsPage()=>ListView(padding:const EdgeInsets.all(18),children:[
-    const Text('TOOLS',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),
-    const SizedBox(height:12),
-    Card(color:panel,child:ListTile(leading:const Icon(Icons.bolt,color:accent),title:const Text('WinGo — 1 Minute'),subtitle:const Text('ARG V1 practice timer and BIG/SMALL controls'),onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const ArgV1Page())))),
-    Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:const Text('Results History'),subtitle:const Text('View saved history records'),onTap:()=>setState(()=>tab=2))),
-    Card(color:panel,child:ListTile(leading:const Icon(Icons.notifications_outlined,color:accent),title:const Text('Notifications'),subtitle:const Text('Read announcements'),onTap:()=>setState(()=>tab=3))),
-    Card(color:panel,child:ListTile(leading:const Icon(Icons.workspace_premium,color:accent),title:const Text('Premium'),subtitle:const Text('View membership options'),onTap:()=>setState(()=>tab=7))),
-    Card(color:panel,child:ListTile(leading:const Icon(Icons.support_agent,color:accent),title:const Text('Support'),subtitle:const Text('Contact Telegram support'),onTap:support)),
-    Card(color:panel,child:ListTile(leading:const Icon(Icons.auto_graph,color:accent),title:const Text('AI & Market Insights'),subtitle:const Text('Historical context and risk information'),onTap:()=>showModalBottomSheet(context:context,backgroundColor:panel,builder:(_)=>const Padding(padding:EdgeInsets.all(20),child:Text('No verified live data feed or prediction model is connected. Use historical information for education only.',style:TextStyle(fontSize:16)))))),
+    const Text('TOOLS',style:TextStyle(fontSize:24,fontWeight:FontWeight.w900)),
+    const SizedBox(height:8),
+    const Text('Choose a tool to open it. ARG V1 starts a fresh 60-second practice round automatically.',style:TextStyle(color:Colors.white70)),
+    const SizedBox(height:18),
+    Card(color:panel,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(18),side:const BorderSide(color:accent,width:1)),child:ListTile(
+      contentPadding:const EdgeInsets.symmetric(horizontal:18,vertical:16),
+      leading:Container(width:52,height:52,decoration:BoxDecoration(color:accent.withValues(alpha:0.12),borderRadius:BorderRadius.circular(14)),child:const Icon(Icons.bolt,color:accent,size:30)),
+      title:const Text('ARG V1',style:TextStyle(fontSize:20,fontWeight:FontWeight.w900)),
+      subtitle:const Padding(padding:EdgeInsets.only(top:6),child:Text('WinGo • 1 Minute • BIG / SMALL practice')),
+      trailing:const Icon(Icons.arrow_forward_ios,size:17,color:accent),
+      onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const ArgV1Page())),
+    )),
+    const SizedBox(height:10),
+    const Text('Note: live results/predictions are not connected. This tool does not generate or claim live signals.',style:TextStyle(color:Colors.orangeAccent)),
   ]);
   Widget insightsPage()=>ListView(padding:const EdgeInsets.all(18),children:[
     const Text('AI & MARKET INSIGHTS',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
@@ -145,11 +151,9 @@ class _HomePageState extends State<HomePage> {
           Text('Educational content only. Live data API is not connected; no live results or guaranteed predictions are shown.',style:TextStyle(color:Colors.white70))])),
         const SizedBox(height:18),const Text('QUICK ACCESS',style:TextStyle(fontSize:18,fontWeight:FontWeight.bold)),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.auto_graph,color:accent),title:const Text('AI Analytics'),subtitle:const Text('Market insights and risk guide'),onTap:()=>setState(()=>tab=1))),
-        Card(color:panel,child:ListTile(leading:const Icon(Icons.bolt,color:accent),title:const Text('WinGo — 1 Minute'),subtitle:const Text('Open ARG V1 practice timer'),onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const ArgV1Page())))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.workspace_premium,color:accent),title:const Text('VIP Membership'),subtitle:const Text('Membership status and future features'),onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const VipMembershipPage())))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.shield_outlined,color:accent),title:const Text('Risk Guide'),subtitle:const Text('Understand probability and risk'),onTap:()=>setState(()=>tab=1))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:const Text('Results History'),subtitle:const Text('View admin-entered history records'),onTap:()=>setState(()=>tab=2))),
-        Card(color:panel,child:ListTile(leading:const Icon(Icons.bolt,color:accent),title:const Text('ARG V1 — Practice Mode'),subtitle:const Text('1-minute timer and Big/Small practice controls'),onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const ArgV1Page())))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.notifications,color:accent),title:const Text('Notifications'),subtitle:const Text('Read in-app announcements'),onTap:()=>setState(()=>tab=3))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.share,color:accent),title:const Text('Share with friends'),subtitle:const Text('Invite friends to TRADE AR MONEY'),onTap:shareApp)),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.support_agent,color:accent),title:const Text('Telegram Support'),subtitle:const Text('Open Telegram'),onTap:support)),
@@ -256,17 +260,17 @@ class _ArgV1PageState extends State<ArgV1Page> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('$value selected for practice only. No result prediction was made.')));
   }
   @override Widget build(BuildContext context)=>Scaffold(
-    appBar:AppBar(title:const Text('ARG V1 • Practice Mode')),
+    appBar:AppBar(title:const Text('ARG V1 • WinGo 1 Minute')),
     body:ListView(padding:const EdgeInsets.all(18),children:[
       Container(padding:const EdgeInsets.all(22),decoration:BoxDecoration(color:panel,borderRadius:BorderRadius.circular(20)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-        const Text('1-MINUTE ROUND TIMER',style:TextStyle(color:accent,fontWeight:FontWeight.bold)),
+        const Text('ARG V1 • 1-MINUTE ROUND',style:TextStyle(color:accent,fontWeight:FontWeight.bold)),
         const SizedBox(height:8),Text((remaining ~/ 60).toString().padLeft(2,'0') + ':' + (remaining % 60).toString().padLeft(2,'0'),style:const TextStyle(fontSize:42,fontWeight:FontWeight.w900)),
         Text('Practice round $round',style:const TextStyle(color:Colors.white70)),
       ])),
       const SizedBox(height:16),
       const Text('BIG / SMALL',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),
       const SizedBox(height:8),
-      const Text('Choose an option to test the controls. This does not predict the next result and does not connect to Mark Pro or a live results server.'),
+      const Text('Practice controls only. This app is not connected to Mark Pro or an authorized live results API, so it cannot show a verified live prediction.'),
       const SizedBox(height:14),
       Row(children:[
         Expanded(child:FilledButton(style:FilledButton.styleFrom(backgroundColor:const Color(0xFF2E8B57)),onPressed:()=>choose('BIG'),child:const Text('BIG'))),
