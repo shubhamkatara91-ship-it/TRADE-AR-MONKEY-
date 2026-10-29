@@ -2,11 +2,14 @@
 Flutter Android app and responsive website for an educational community.
 
 ## Customer support
+The app includes a **Share with friends** action in the app bar, Home and Community screens. Android opens the system share sheet; the invite currently points to this public GitHub repository because GitHub Pages hosting is not enabled yet. The website has Share buttons that use the current page URL and fall back to copying the invite text when supported. Sharing code is committed, but the newly triggered APK build and website hosting are not yet confirmed successful.
+
 The app includes a support button opening the supplied Telegram invite:
 https://t.me/+pmahyzLfcMA2ODZl
 
 ## Current verified status
-- Latest source validation passed in GitHub Actions run `40819804147` (HTML/inline JavaScript and schema safety/idempotency checks): https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40819804147
+- Latest source validation passed in GitHub Actions run `40820147307` (HTML/inline JavaScript and schema safety/idempotency checks): https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820147307
+- Share-with-friends changes are committed; latest Android build is running at https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820133635. Do not use the older APK if you specifically need the new Share buttons.
 - Latest available successful Android APK compilation is run `40810500955`; artifact ID `12870113190` (expires 12 November 2026).
 - Flutter app source includes email/password signup, login, password reset, logout, learning articles, result-history display, announcements, and a role-gated admin interface.
 - A responsive browser website and separate admin page are present under `website/`.
