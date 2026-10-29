@@ -100,6 +100,15 @@ class _HomePageState extends State<HomePage> {
       onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const ArgV1Page())),
     )),
     const SizedBox(height:10),
+    Card(color:panel,child:ListTile(
+      contentPadding:const EdgeInsets.symmetric(horizontal:18,vertical:12),
+      leading:Container(width:52,height:52,decoration:BoxDecoration(color:accent.withOpacity(0.12),borderRadius:BorderRadius.circular(14)),child:const Icon(Icons.shield_outlined,color:accent,size:28)),
+      title:const Text('Auto Bet — Practice Controls',style:TextStyle(fontSize:17,fontWeight:FontWeight.w800)),
+      subtitle:const Padding(padding:EdgeInsets.only(top:5),child:Text('Capital target • Levels 1–5 • Practice-only stop rules')),
+      trailing:const Icon(Icons.arrow_forward_ios,size:17,color:accent),
+      onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const AutoBetPracticePage())),
+    )),
+    const SizedBox(height:10),
     const Text('Note: live results/predictions are not connected. This tool does not generate or claim live signals.',style:TextStyle(color:Colors.orangeAccent)),
   ]);
   Widget insightsPage()=>ListView(padding:const EdgeInsets.all(18),children:[
@@ -485,6 +494,88 @@ class VipMembershipPage extends StatelessWidget {
       const Card(color:panel,child:ListTile(leading:Icon(Icons.insights,color:accent),title:Text('Analytics'),subtitle:Text('Requires a verified data source and tested analytics model.'))),
       const Card(color:panel,child:ListTile(leading:Icon(Icons.history,color:accent),title:Text('History'),subtitle:Text('Historical records are available from the Results tab when entered by an authorized admin.'))),
       const Card(color:panel,child:ListTile(leading:Icon(Icons.support_agent,color:accent),title:Text('Support'),subtitle:Text('Use Telegram Support from the dashboard.'))),
+    ]),
+  );
+}
+
+class AutoBetPracticePage extends StatefulWidget {
+  const AutoBetPracticePage({super.key});
+  @override State<AutoBetPracticePage> createState() => _AutoBetPracticePageState();
+}
+class _AutoBetPracticePageState extends State<AutoBetPracticePage> {
+  final List<int> capitals = [300, 500, 1000, 2000];
+  final List<int> targets = [15, 30, 45, 90];
+  int capital = 300, targetPercent = 15, maxLevel = 5, level = 1;
+  double practicePnl = 0;
+  bool running = false, stopped = false;
+  String stopReason = 'Practice session not started';
+  final List<String> history = [];
+  double get targetAmount => capital * targetPercent / 100;
+  double get progress => targetAmount <= 0 ? 0 : (practicePnl / targetAmount).clamp(0.0, 1.0);
+
+  void startSession() {
+    setState(() {
+      running = true; stopped = false; level = 1; practicePnl = 0;
+      stopReason = 'Practice session running'; history.clear();
+      history.insert(0, 'Practice session started • Capital reference ₹$capital • Target $targetPercent%');
+    });
+  }
+  void logOutcome(bool win) {
+    if (!running || stopped) return;
+    const double simulatedRate = 0.05;
+    final delta = capital * simulatedRate * (win ? 1 : -1);
+    setState(() {
+      practicePnl += delta;
+      history.insert(0, 'Level $level • ${win ? 'Practice win' : 'Practice loss'} • ${delta >= 0 ? '+' : '-'}₹${delta.abs().toStringAsFixed(2)} • Simulated only');
+      if (practicePnl >= targetAmount) {
+        running = false; stopped = true; stopReason = 'Target reached — practice stopped';
+      } else if (!win) {
+        if (level >= maxLevel) {
+          running = false; stopped = true; stopReason = 'Level $maxLevel loss limit reached — practice stopped';
+        } else { level += 1; }
+      }
+    });
+  }
+  @override Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('Auto Bet • Practice Controls')),
+    body: ListView(padding: const EdgeInsets.all(18), children: [
+      Card(color: panel, child: const Padding(padding: EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [Icon(Icons.shield_outlined, color: accent), SizedBox(width: 8), Expanded(child: Text('PRACTICE SIMULATOR ONLY', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)))]),
+        SizedBox(height: 8),
+        Text('यह स्क्रीन केवल काल्पनिक practice outcomes दर्ज करती है। यह कोई prediction नहीं बनाती, पैसे नहीं लगाती, wallet/payment नहीं खोलती और किसी बाहरी website पर bet submit नहीं करती।'),
+      ]))),
+      const SizedBox(height: 16),
+      const Text('Capital reference', style: TextStyle(fontWeight: FontWeight.bold)),
+      const SizedBox(height: 8),
+      Wrap(spacing: 8, runSpacing: 8, children: capitals.map((value) => ChoiceChip(label: Text('₹$value'), selected: capital == value, onSelected: running ? null : (_) => setState(() => capital = value)).toList()),
+      const SizedBox(height: 16),
+      const Text('Practice target', style: TextStyle(fontWeight: FontWeight.bold)),
+      const SizedBox(height: 8),
+      Wrap(spacing: 8, runSpacing: 8, children: targets.map((value) => ChoiceChip(label: Text('$value%  (₹${(capital * value / 100).toStringAsFixed(0)})'), selected: targetPercent == value, onSelected: running ? null : (_) => setState(() => targetPercent = value)).toList()),
+      const SizedBox(height: 16),
+      const Text('Maximum practice loss level', style: TextStyle(fontWeight: FontWeight.bold)),
+      const SizedBox(height: 8),
+      Wrap(spacing: 8, children: [1,2,3,4,5].map((value) => ChoiceChip(label: Text('Level $value'), selected: maxLevel == value, onSelected: running ? null : (_) => setState(() { maxLevel = value; if (level > maxLevel) level = maxLevel; })).toList()),
+      const SizedBox(height: 18),
+      Card(color: panel, child: Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Session status', style: TextStyle(fontWeight: FontWeight.bold)), const SizedBox(height: 8),
+        Text(stopReason, style: TextStyle(color: stopped ? Colors.orangeAccent : accent, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 8), Text('Current practice level: $level / $maxLevel'),
+        Text('Simulated P/L: ${practicePnl >= 0 ? '+' : '-'}₹${practicePnl.abs().toStringAsFixed(2)}'),
+        Text('Target: ₹${targetAmount.toStringAsFixed(2)} ($targetPercent%)'),
+        const SizedBox(height: 10), LinearProgressIndicator(value: progress, minHeight: 7),
+      ]))),
+      const SizedBox(height: 12),
+      SizedBox(width: double.infinity, child: FilledButton.icon(onPressed: running ? null : startSession, icon: const Icon(Icons.play_arrow), label: Text(stopped ? 'Start new practice session' : 'Start practice session'))),
+      const SizedBox(height: 8),
+      Row(children: [
+        Expanded(child: OutlinedButton.icon(onPressed: running ? () => logOutcome(true) : null, icon: const Icon(Icons.check_circle_outline), label: const Text('Log practice win'))),
+        const SizedBox(width: 8),
+        Expanded(child: OutlinedButton.icon(onPressed: running ? () => logOutcome(false) : null, icon: const Icon(Icons.cancel_outlined), label: const Text('Log practice loss'))),
+      ]),
+      const SizedBox(height: 18), const Text('Practice history', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)), const SizedBox(height: 8),
+      if (history.isEmpty) const Text('Session शुरू करने के बाद practice entries यहाँ दिखेंगी।', style: TextStyle(color: Colors.white70)),
+      ...history.take(12).map((entry) => Card(color: panel, child: Padding(padding: const EdgeInsets.all(12), child: Text(entry)))),
     ]),
   );
 }
