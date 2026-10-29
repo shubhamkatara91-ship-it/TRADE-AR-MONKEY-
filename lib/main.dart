@@ -260,6 +260,10 @@ class _ArgV1PageState extends State<ArgV1Page> {
       if(!mounted)return;
       _syncRoundClock();
     });
+    // Load the read-only result history automatically when ARG V1 opens.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) loadLiveResults();
+    });
   }
   void _syncRoundClock(){
     final now=DateTime.now();
