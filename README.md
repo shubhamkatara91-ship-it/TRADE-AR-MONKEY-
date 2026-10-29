@@ -4,9 +4,9 @@ Flutter Android app and responsive website for an educational community.
 
 ## Current verified status
 
-- **Latest successful Android APK build:** [GitHub Actions run 40824384462](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40824384462).
-- **APK artifact:** `TRADE-AR-MONEY-release-apk-latest` (ZIP bundle, about 24.7 MB; artifact expires 27 January 2027).
-- **Latest source validation:** [Latest successful source validation run 40825747395](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40825747395).
+- **Latest confirmed successful Android APK build:** [GitHub Actions run 40828849833](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40828849833) (commit `7899e10c`). A newer build for automatic result-history loading is still running: [run 40857879014](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40857879014).
+- **APK artifact:** download the ZIP from the successful run's **Artifacts** section. Build artifacts expire; use the newest successful run rather than an older saved link.
+- **Latest confirmed successful source validation:** [run 40857936938](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40857936938).
 - The current Tools section exposes ARG V1; its one-minute timer starts automatically. BIG/SMALL choices are practice selections, not verified predictions.
 - Flutter source includes email/password signup, login, password reset, logout, learning articles, result-history display, announcements, support, and role-gated admin features.
 - A responsive browser website and separate admin page are present under `website/`.
@@ -15,7 +15,7 @@ Flutter Android app and responsive website for an educational community.
 
 ## Download the Android APK
 
-1. Open the [latest successful Android build](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40824384462).
+1. Open the [latest confirmed successful Android build](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40828849833). If [newer build 40857879014](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40857879014) succeeds, prefer its artifact because it includes automatic result-history loading.
 2. Under **Artifacts**, download `TRADE-AR-MONEY-release-apk-latest`.
 3. Extract the ZIP and install the APK on Android.
 
