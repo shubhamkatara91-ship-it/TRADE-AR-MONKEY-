@@ -246,6 +246,8 @@ class _ArgV1PageState extends State<ArgV1Page> {
   int remaining=60-DateTime.now().second;
   String round=_localPeriodId(DateTime.now());
   String? selected;
+  bool autoPractice=false;
+  String autoPracticeChoice='BIG';
   final List<String> practiceHistory=[];
   List<Map<String,dynamic>> liveRows=[];
   String? liveSource, liveFetchedAt, liveError;
@@ -275,6 +277,8 @@ class _ArgV1PageState extends State<ArgV1Page> {
         remaining=nextRemaining;
         selected=null;
       });
+      // Practice-only automation; no money or external bet submission.
+      if(autoPractice) choose(autoPracticeChoice);
     }else if(nextRemaining!=remaining){
       setState(()=>remaining=nextRemaining);
     }
@@ -364,6 +368,23 @@ class _ArgV1PageState extends State<ArgV1Page> {
         const SizedBox(width:12),
         Expanded(child:FilledButton(style:FilledButton.styleFrom(backgroundColor:const Color(0xFFB65C5C)),onPressed:()=>choose('SMALL'),child:const Text('SMALL'))),
       ]),
+      const SizedBox(height:14),
+      DropdownButtonFormField<String>(
+        value:autoPracticeChoice,
+        decoration:const InputDecoration(labelText:'Auto-practice choice',helperText:'Repeats this choice each new local minute. Not a prediction.'),
+        items:const [
+          DropdownMenuItem(value:'BIG',child:Text('Repeat BIG')),
+          DropdownMenuItem(value:'SMALL',child:Text('Repeat SMALL')),
+        ],
+        onChanged:autoPractice?null:(value){if(value!=null)setState(()=>autoPracticeChoice=value);},
+      ),
+      const SizedBox(height:8),
+      SizedBox(width:double.infinity,child:OutlinedButton.icon(
+        icon:Icon(autoPractice?Icons.stop_circle_outlined:Icons.autorenew),
+        onPressed:()=>setState(()=>autoPractice=!autoPractice),
+        label:Text(autoPractice?'Stop auto-practice':'Start auto-practice'),
+      )),
+      Text(autoPractice?'Auto-practice is ON. It will record a practice choice at each new local minute.':'Auto-practice is OFF.',style:TextStyle(color:autoPractice?accent:Colors.white70)),
       if(selected!=null)Padding(padding:const EdgeInsets.only(top:12),child:Text('Selected: $selected (practice only)',style:const TextStyle(color:accent,fontWeight:FontWeight.bold))),
       const SizedBox(height:20),
       const Text('PRACTICE HISTORY',style:TextStyle(fontSize:18,fontWeight:FontWeight.bold)),
