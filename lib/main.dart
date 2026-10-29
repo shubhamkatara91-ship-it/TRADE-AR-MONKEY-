@@ -55,21 +55,32 @@ class _HomePageState extends State<HomePage> {
   }
   Future<void> auth(bool signup) async {
     if(!(formKey.currentState?.validate()??false)) return;
+    final e=email.text.trim();
+    final p=password.text;
+    if(p.isEmpty){msg('Password लिखें।');return;}
+    if(signup && p.length<8){msg('नया password कम-से-कम 8 अक्षर का होना चाहिए।');return;}
     setState(()=>busy=true);
     try {
       if(signup){
-        final r=await client.auth.signUp(email:email.text.trim(),password:password.text);
+        final r=await client.auth.signUp(email:e,password:p);
         if(mounted && r.session!=null){setState(()=>tab=0);}
         msg(r.session==null?'Signup request भेजी गई। Email confirmation चालू हो तो email verify करके फिर login करें।':'Account बन गया और login सफल।');
       } else {
-        await client.auth.signInWithPassword(email:email.text.trim(),password:password.text);
+        await client.auth.signInWithPassword(email:e,password:p);
         if(mounted){
           setState(()=>tab=0);
           FocusManager.instance.primaryFocus?.unfocus();
         }
         msg('Login सफल। Home खुल गया।');
       }
-    } on AuthException catch(e){msg(e.message);} catch(_){msg('कनेक्शन नहीं हुआ। Supabase सेटिंग और इंटरनेट जाँचें।');}
+    } on AuthException catch(e){
+      final m=e.message.toLowerCase();
+      if(m.contains('invalid login credentials')){msg('Email या password सही नहीं है। Email की spelling जाँचें या Forgot password इस्तेमाल करें.');}
+      else if(m.contains('email not confirmed')){msg('Email अभी verify नहीं हुई। Inbox/Spam में verification link देखें.');}
+      else if(m.contains('rate limit')||m.contains('too many requests')){msg('बहुत बार कोशिश हुई है। थोड़ी देर बाद फिर प्रयास करें.');}
+      else if(m.contains('already registered')){msg('यह email पहले से registered है। Log in करें या password reset करें.');}
+      else {msg('Authentication error: ${e.message}');}
+    } catch(_){msg('कनेक्शन नहीं हुआ। इंटरनेट और Supabase URL/anon key की जाँच करें।');}
     finally{if(mounted)setState(()=>busy=false);}
   }
   Future<void> resetPassword() async {
@@ -184,7 +195,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height:8),const Text('Account बनाने या login करने के लिए email और password डालें.'),
           const SizedBox(height:16),Form(key:formKey,child:Column(children:[
             TextFormField(controller:email,keyboardType:TextInputType.emailAddress,autofillHints:const[AutofillHints.email],decoration:const InputDecoration(labelText:'Email'),validator:(v){final x=(v??'').trim();return x.contains('@')&&x.contains('.')?null:'सही email लिखें।';}),
-            const SizedBox(height:12),TextFormField(controller:password,obscureText:!showPassword,decoration:InputDecoration(labelText:'Password',suffixIcon:IconButton(onPressed:()=>setState(()=>showPassword=!showPassword),icon:Icon(showPassword?Icons.visibility_off:Icons.visibility))),validator:(v)=>(v??'').length<8?'कम-से-कम 8 अक्षर लिखें।':null),
+            const SizedBox(height:12),TextFormField(controller:password,obscureText:!showPassword,decoration:InputDecoration(labelText:'Password',suffixIcon:IconButton(onPressed:()=>setState(()=>showPassword=!showPassword),icon:Icon(showPassword?Icons.visibility_off:Icons.visibility))),validator:(v)=>(v??'').isEmpty?'Password लिखें।':null),
             const SizedBox(height:14),SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:()=>auth(false),child:Text(busy?'Please wait…':'Log in'))),
             SizedBox(width:double.infinity,child:OutlinedButton(onPressed:busy?null:()=>auth(true),child:const Text('Create account'))),
             TextButton(onPressed:busy?null:resetPassword,child:const Text('Forgot password?')),
