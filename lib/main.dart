@@ -167,14 +167,22 @@ class _HomePageState extends State<HomePage> {
 
           SizedBox(width:double.infinity,child:OutlinedButton.icon(onPressed:logout,icon:const Icon(Icons.logout),label:const Text('Log out'))),
         ],
+        if(user!=null)...[
         const SizedBox(height:14),OutlinedButton.icon(onPressed:support,icon:const Icon(Icons.support_agent),label:const Text('Contact support')),
         const SizedBox(height:14),
         const Text('LEGAL & PRIVACY',style:TextStyle(fontSize:16,fontWeight:FontWeight.bold)),
         ListTile(contentPadding:EdgeInsets.zero,leading:const Icon(Icons.privacy_tip_outlined,color:accent),title:const Text('Privacy Policy'),subtitle:const Text('Review data handling information'),onTap:()=>openDocument('https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/blob/main/docs/PRIVACY_POLICY.md')),
         ListTile(contentPadding:EdgeInsets.zero,leading:const Icon(Icons.description_outlined,color:accent),title:const Text('Terms of Use'),subtitle:const Text('Review app terms and limitations'),onTap:()=>openDocument('https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/blob/main/docs/TERMS_OF_USE.md')),
         const SizedBox(height:14),const Text('Admin access must be granted securely in the database. Never place service-role secrets in the app.',style:TextStyle(color:Colors.white60)),
+        ],
       ]),
     ];
+    if(user==null){
+      return Scaffold(
+        appBar:AppBar(title:const Text('TRADE AR MONEY',style:TextStyle(fontWeight:FontWeight.w900))),
+        body:pages[5],
+      );
+    }
     return Scaffold(appBar:AppBar(title:const Text('TRADE AR MONEY',style:TextStyle(fontWeight:FontWeight.w900)),actions:[
       IconButton(onPressed:()=>setState(()=>tab=3),tooltip:'Notifications',icon:const Icon(Icons.notifications_outlined,color:accent)),
       IconButton(onPressed:shareApp,tooltip:'Share app',icon:const Icon(Icons.share_outlined,color:accent)),
