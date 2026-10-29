@@ -5,6 +5,7 @@
 ## तैयार code
 - Flutter Android app: email/password signup, login, password reset, logout.
 - Learning articles, announcements, result-history feed, Telegram support link.
+- Share with friends buttons in the Android app bar, Home and Community; website Share buttons use native browser sharing with clipboard/prompt fallback.
 - Android admin screen और browser admin page: article/announcement publish तथा verified history record entry.
 - Supabase schema with RLS policies and Realtime for in-app announcements.
 - Browser website source in `website/`.
@@ -12,12 +13,17 @@
 - Hindi setup instructions and release checklist.
 
 ## Automated checks and Android APK
-- Latest source validation run `40819804147` **successful**; website HTML/inline JavaScript syntax and schema access-control/idempotency checks passed: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40819804147
+- Latest source validation run `40820147307` **successful**; website HTML/inline JavaScript syntax and schema access-control/idempotency checks passed: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820147307
+- Share-with-friends changes committed. Android APK build run `40820133635` was still running at last check: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820133635. Use its artifact only after the run succeeds.
 - Last successful Android APK compilation run: `40810500955`: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40810500955
 - Validation and APK compilation are now separate workflows to avoid rebuilding the APK for schema/docs-only changes.
 - Latest artifact: `TRADE-AR-MONEY-release-apk-latest` (ZIP about 24.7 MB; compiled APK about 53.4 MB), artifact ID `12870113190`; it expires on 2026-11-12.
 - Download: open the latest run, open **Artifacts**, download `TRADE-AR-MONEY-release-apk-latest` ZIP, then extract the APK.
 - Build result confirms compilation only; it does not verify live Supabase configuration, hosting, push delivery, or physical-device behavior.
+
+## Share feature note
+- Android share message currently links to the public GitHub repository because the website has not yet been published. Once GitHub Pages is enabled and a stable site URL is verified, update the invite to that URL.
+- Website share action shares the current page URL; this cannot be fully tested until the site is hosted.
 
 ## अभी भी blocked / unverified
 1. **Website deployment:** still requires owner-side GitHub Pages enablement. Open https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages and choose **Build and deployment → Source: GitHub Actions**; then rerun the deployment workflow.
