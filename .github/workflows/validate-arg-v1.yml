@@ -1,0 +1,25 @@
+name: Validate ARG V1 Edge Function
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/arg-v1-results/**'
+      - '.github/workflows/validate-arg-v1.yml'
+  pull_request:
+    paths:
+      - 'supabase/functions/arg-v1-results/**'
+      - '.github/workflows/validate-arg-v1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check Edge Function
+        run: deno check --no-lock supabase/functions/arg-v1-results/index.ts
