@@ -15,7 +15,25 @@
 4. Table Editor में `profiles`, `learning_articles`, `app_notifications`, `result_history`, `device_push_tokens` दिखने चाहिए।
 5. अगर SQL error आए, error text को ठीक-ठीक देखें; बिना जाँच के बार-बार पूरा schema न चलाएँ।
 
-## 3. अपना account Admin बनाएं
+## 3. Forgot Password के email OTP को configure करें
+
+App का Forgot Password flow Supabase Auth के recovery email पर निर्भर करता है। OTP field तभी काम करेगी जब recovery email template numeric/code OTP भेजे; default recovery-link template को OTP समझकर न डालें।
+
+1. Supabase Dashboard → **Authentication → Email Templates → Reset Password** खोलें।
+2. Reset Password email body में recovery code के लिए Supabase template variable `{{ .Token }}` का उपयोग करें। उदाहरण:
+
+```html
+<h2>TRADE AR MONEY password reset</h2>
+<p>आपका password reset OTP है:</p>
+<p style="font-size:24px;font-weight:bold;letter-spacing:4px">{{ .Token }}</p>
+<p>यह code सीमित समय के लिए मान्य है। इसे किसी के साथ साझा न करें।</p>
+```
+
+3. Template save करें। Authentication email delivery/SMTP configuration भी जाँचें; custom SMTP न होने पर provider की sending limits लागू हो सकती हैं।
+4. पहले से बने test account पर **Forgot Password → Send OTP to Email → Verify OTP → Save New Password** पूरा करके जाँचें। Inbox के साथ Spam folder भी देखें।
+5. OTP किसी अन्य account/email पर न भेजें। Reset request पर app generic message दिखाता है ताकि account existence अनावश्यक रूप से disclose न हो।
+
+## 4. अपना account Admin बनाएं
 1. App या website से अपने ही email पर account बनाएं और email confirmation पूरा करें।
 2. Supabase → **Authentication → Users** में अपने account का UUID copy करें।
 3. SQL Editor में यह query चलाएँ; placeholder को अपने UUID से बदलें:
@@ -29,7 +47,7 @@ where id = 'PASTE_YOUR_AUTH_USER_UUID_HERE';
 4. Query के बाद affected rows 1 होनी चाहिए। App/website से logout करके फिर login करें।
 5. किसी दूसरे व्यक्ति को admin role न दें, जब तक आप उस व्यक्ति को अधिकृत न करते हों।
 
-## 4. Website publish करें — जरूरी manual step
+## 5. Website publish करें — जरूरी manual step
 पिछला deployment run GitHub Pages site को पढ़/बना नहीं पाया: GitHub ने `Get Pages site: Not Found` और `Create Pages site: Resource not accessible by integration` लौटाया। Workflow code repository permissions से Pages को पहली बार enable नहीं कर सकता।
 
 1. Repository owner अपने account से [Repository Pages settings](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages) खोलें।
@@ -38,7 +56,7 @@ where id = 'PASTE_YOUR_AUTH_USER_UUID_HERE';
 4. Workflow सफल होने पर deployment output में दिया गया URL खोलें। सिर्फ URL खुलना काफी नहीं—login, published articles, announcements और admin access test करें।
 5. यदि deployment फिर fail हो, उस नए run का error पढ़ें; live website को सफल घोषित न करें।
 
-## 5. जरूरी acceptance tests
+## 6. जरूरी acceptance tests
 - Normal user login/signup/reset/logout कर पाए।
 - Normal user admin content publish न कर पाए।
 - Admin article/announcement publish करे और public feed में दिखे।
