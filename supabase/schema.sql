@@ -1,9 +1,17 @@
 -- TRADE AR MONEY core schema. Run in Supabase SQL Editor.
 create table if not exists public.profiles (
  id uuid primary key references auth.users(id) on delete cascade,
- email text, role text not null default 'user' check (role in ('user','admin')),
+ email text,
+ username text,
+ mobile text,
+ role text not null default 'user' check (role in ('user','admin')),
  created_at timestamptz not null default now()
 );
+-- Safe migration for projects where profiles already existed before signup fields were added.
+alter table public.profiles add column if not exists username text;
+alter table public.profiles add column if not exists mobile text;
+create unique index if not exists profiles_username_lower_unique
+  on public.profiles (lower(username)) where username is not null and length(trim(username)) > 0;
 alter table public.profiles enable row level security;
 -- Explicit API privileges; row-level security still limits each user's rows and allowed inserts.
 grant select, insert on public.profiles to authenticated;
@@ -11,8 +19,22 @@ drop policy if exists "Users can read own profile" on public.profiles;
 create policy "Users can read own profile" on public.profiles for select using (auth.uid()=id);
 drop policy if exists "Users can create own user profile" on public.profiles;
 create policy "Users can create own user profile" on public.profiles for insert with check (auth.uid()=id and role='user');
-create or replace function public.handle_new_user() returns trigger language plpgsql security definer set search_path=public as $$
-begin insert into public.profiles(id,email,role) values(new.id,new.email,'user') on conflict(id) do update set email=excluded.email; return new; end; $$;
+create or replace function public.handle_new_user() returns trigger language plpgsql security definer set search_path=public as $
+begin
+  insert into public.profiles(id,email,username,mobile,role)
+  values(
+    new.id,
+    new.email,
+    nullif(trim(new.raw_user_meta_data->>'username'),''),
+    nullif(trim(new.raw_user_meta_data->>'mobile'),''),
+    'user'
+  )
+  on conflict(id) do update set
+    email=excluded.email,
+    username=coalesce(public.profiles.username,excluded.username),
+    mobile=coalesce(public.profiles.mobile,excluded.mobile);
+  return new;
+end; $;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users for each row execute procedure public.handle_new_user();
 
