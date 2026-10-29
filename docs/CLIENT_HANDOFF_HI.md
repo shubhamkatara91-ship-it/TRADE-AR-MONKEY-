@@ -21,7 +21,7 @@ The current CI artifact is a build/test APK, not a verified production-signed re
 
 | Item | Current status | Required proof |
 |---|---|---|
-| Android build | CI build previously succeeded; newest run must finish | Successful latest run and downloadable APK artifact |
+| Android build | Latest CI build succeeded: [run 40824384462](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40824384462); artifact `TRADE-AR-MONEY-release-apk-latest` is available until 27 January 2027 | Download artifact ZIP, extract APK, then install and test on a physical Android device |
 | Supabase schema | SQL file committed; live project execution not independently verified | Run `supabase/schema.sql` in the correct project's SQL Editor; verify tables and policies |
 | Admin account | Owner must grant the role to the intended account | Test admin publish and ordinary-user denial |
 | Website hosting | GitHub Pages needs owner-side enablement | Set Pages source to GitHub Actions and verify deployed URL |
@@ -44,7 +44,7 @@ The current CI artifact is a build/test APK, not a verified production-signed re
    ```
 5. Open [GitHub Pages settings](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages), choose **Build and deployment → Source: GitHub Actions**, and save.
 6. Run the deployment workflow from [GitHub Actions](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions).
-7. Download the APK artifact from the successful validation workflow, extract the ZIP, and install the APK on a test Android phone.
+7. Download the APK artifact from the [latest successful Android build](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40824384462), extract the ZIP, and install the APK on a test Android phone.
 8. Complete every launch-gate test above before calling the service production-ready.
 
 ## Security requirements
