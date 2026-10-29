@@ -13,7 +13,7 @@ const accent = Color(0xFF9BE7A5), background = Color(0xFF0E1712), panel = Color(
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+    await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey).timeout(const Duration(seconds: 10), onTimeout: () => throw TimeoutException('Backend initialization timed out after 10 seconds.'));
     runApp(const TradeArMoneyApp());
   } catch (error, stackTrace) {
     // Keep the app launchable if backend configuration/network initialization fails.
