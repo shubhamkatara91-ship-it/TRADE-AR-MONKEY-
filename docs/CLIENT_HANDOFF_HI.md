@@ -2,13 +2,13 @@
 
 **स्थिति:** Client review / staging handover — production launch अभी conditional है.  
 **Platform:** Android APK + responsive website source + Supabase backend schema.  
-**उद्देश्य:** Market education, risk awareness, announcements, and manually verified history. यह betting या guaranteed-prediction product नहीं है.
+**उद्देश्य:** Market education, risk awareness, announcements, and manually entered history records. यह betting या guaranteed-prediction product नहीं है.
 
 ## Client को अभी क्या दिखाया जा सकता है
 
 - Android app: Home, Learn & Guides, Results History, Alerts, Community/Telegram, Account.
 - Email/password signup, login, password reset, and logout UI integrated with Supabase Auth.
-- Admin UI for publishing learning articles, announcements, and manually verified history.
+- Admin UI for publishing learning articles, announcements, and manually entered history records.
 - Website: public learning content, announcements, history, account UI, and separate admin page.
 - Supabase SQL schema with Row Level Security policies and admin-role checks.
 - GitHub Actions workflow that validates website HTML/inline JavaScript and compiles an Android release APK.
