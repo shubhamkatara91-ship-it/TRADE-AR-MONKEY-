@@ -207,7 +207,7 @@ class _ArgV1PageState extends State<ArgV1Page> {
     body:ListView(padding:const EdgeInsets.all(18),children:[
       Container(padding:const EdgeInsets.all(22),decoration:BoxDecoration(color:panel,borderRadius:BorderRadius.circular(20)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
         const Text('1-MINUTE ROUND TIMER',style:TextStyle(color:accent,fontWeight:FontWeight.bold)),
-        const SizedBox(height:8),Text('00:' + remaining.toString().padLeft(2,'0'),style:const TextStyle(fontSize:42,fontWeight:FontWeight.w900)),
+        const SizedBox(height:8),Text((remaining ~/ 60).toString().padLeft(2,'0') + ':' + (remaining % 60).toString().padLeft(2,'0'),style:const TextStyle(fontSize:42,fontWeight:FontWeight.w900)),
         Text('Practice round $round',style:const TextStyle(color:Colors.white70)),
       ])),
       const SizedBox(height:16),
