@@ -1,37 +1,54 @@
 # TRADE AR MONEY — Privacy Policy (Draft)
 
-**Last updated:** 28 October 2026
+**Status:** Draft for owner review. Do not treat this as final legal advice or publish the service broadly until the owner has reviewed it, added a contact method, and checked applicable law.
 
-This draft describes the current intended behavior of the TRADE AR MONEY educational app. The project owner must review, complete contact details, and publish this policy at a public URL before distributing the app. Do not treat this draft as legal advice.
+**Last updated:** 29 October 2026
 
-## Information processed
-- **Account information:** email address and authentication identifiers processed by Supabase when you create or use an account.
-- **App content:** published learning articles, announcements, and result-history records stored in the configured Supabase project.
-- **Support:** if you open Telegram, Telegram handles that interaction under its own terms and privacy policy.
+## 1. Who operates this service
 
-## Why information is used
-Information is used to authenticate accounts, provide app features, display educational content and announcements, protect the service, and troubleshoot issues.
+TRADE AR MONEY is an educational community app and website. Before public launch, the operator must add their legal/operator name and a working privacy contact address here.
 
-## Data storage and providers
-Authentication and app records are configured to use Supabase. Data may be processed by the providers and infrastructure required to operate the service. The owner must verify the project's region, retention settings, backups, and applicable contractual terms before launch.
+## 2. Information that may be processed
 
-## Sharing
-The app should not sell personal information. Information may be processed by infrastructure providers or disclosed when legally required. The owner must update this section if analytics, advertising, payment processing, push messaging, or other providers are added.
+Depending on which features you use, the service may process:
 
-## Retention and deletion
-The owner should establish a retention schedule and provide a contact for account/data deletion requests. Deleting the app from a device does not necessarily delete server-side account data.
+- **Account information:** email address, authentication user identifier, and account/security metadata handled by Supabase Authentication.
+- **Content and interactions:** learning content, announcements, support messages, and history records that an authorized administrator publishes or that you submit through a feature.
+- **Technical data:** information needed by the hosting, authentication, and database providers to operate, secure, and troubleshoot the service. Provider-specific logs and retention periods depend on their settings and terms.
+- **ARG V1 practice choices:** BIG/SMALL choices and a local practice timer may be shown in the interface. They are practice interactions, not verified predictions.
 
-## Security
-The app uses Supabase authentication and database row-level security policies. No system can guarantee absolute security. Never publish service-role keys or other server secrets in the mobile app or public repository.
+Do not submit passwords, payment card details, government identifiers, or other sensitive information in public content or support fields.
 
-## Children
-This app is not intended for children under the minimum age required by applicable law. The owner must add appropriate age and parental-consent requirements before launch if relevant.
+## 3. Why information is used
 
-## Contact
-**Privacy contact:** [Add the owner's monitored email address before publication.]
+Information may be used to create and secure accounts, provide the educational features you request, display published content, administer the community, respond to support requests, and diagnose abuse or technical failures.
 
-## Owner launch checklist
-- Replace this draft with a reviewed policy and working contact address.
-- Confirm the actual data collected and providers enabled in production.
-- Publish this policy at a stable HTTPS URL and link it inside the app and store listing.
-- Confirm applicable Indian data-protection and app-store obligations.
+## 4. Service providers and disclosure
+
+The app is configured to use Supabase for authentication and database services. The website loads the Supabase JavaScript client from a third-party content delivery network. These providers may process technical information as part of providing their services. Review their current privacy terms before launch.
+
+Information may also be disclosed when required by law, to protect the service and its users, or as part of a legitimate transfer of the service. The operator should document any additional providers before adding them.
+
+## 5. Retention and deletion
+
+Account and content records may remain in the configured backend until the operator deletes them or applies a retention process. The operator must configure and test account deletion, backups, and retention before public launch. To request access or deletion, use the operator's contact method (to be added above); do not send passwords or access tokens.
+
+## 6. Security
+
+The project is designed to use Supabase authentication and database access controls. No online service can guarantee absolute security. The operator must test database row-level security, admin permissions, backups, and secret handling before launch. Public client keys are not substitutes for database authorization rules, and service-role secrets must never be embedded in the app or website.
+
+## 7. Children
+
+The operator must decide the intended age range and apply any required parental-consent and child-privacy safeguards before accepting users who may be minors. Do not knowingly collect children's personal information without the required legal basis and safeguards.
+
+## 8. International processing
+
+Hosting and service providers may process data in locations different from your own. The operator should confirm the providers' current processing locations and applicable transfer requirements.
+
+## 9. Changes
+
+This policy may be updated as the service changes. The operator should publish a new effective date and notify users when required.
+
+## 10. Contact and launch checklist
+
+Before public launch, the operator must fill in a monitored contact address and legal/operator identity, confirm the actual data flows, configure deletion and retention, review provider terms, and obtain legal advice where appropriate. This draft is a starting point, not a substitute for jurisdiction-specific legal review.
