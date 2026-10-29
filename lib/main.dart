@@ -228,7 +228,7 @@ class _HomePageState extends State<HomePage> {
         Card(color:panel,child:ListTile(leading:const Icon(Icons.auto_graph,color:accent),title:const Text('AI Analytics'),subtitle:const Text('Market insights and risk guide'),onTap:()=>setState(()=>tab=1))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.workspace_premium,color:accent),title:const Text('VIP Membership'),subtitle:const Text('Membership status and future features'),onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const VipMembershipPage())))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.shield_outlined,color:accent),title:const Text('Risk Guide'),subtitle:const Text('Understand probability and risk'),onTap:()=>setState(()=>tab=1))),
-        Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:const Text('Results History'),subtitle:const Text('View admin-entered history records'),onTap:()=>setState(()=>tab=2))),
+        Card(color:panel,child:ListTile(title:const Text('Results History'),subtitle:const Text('View admin-entered history records'),onTap:()=>setState(()=>tab=2))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.notifications,color:accent),title:const Text('Notifications'),subtitle:const Text('Read in-app announcements'),onTap:()=>setState(()=>tab=3))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.share,color:accent),title:const Text('Share with friends'),subtitle:const Text('Invite friends to TRADE AR MONEY'),onTap:shareApp)),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.support_agent,color:accent),title:const Text('Telegram Support'),subtitle:const Text('Open Telegram'),onTap:support)),
