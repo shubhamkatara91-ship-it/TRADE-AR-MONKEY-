@@ -8,6 +8,7 @@ on:
       - 'lib/**'
       - 'pubspec.yaml'
       - '.github/workflows/validate-project.yml'
+      - '.github/workflows/build-android-apk.yml'
   pull_request:
     branches: [main]
   workflow_dispatch:
