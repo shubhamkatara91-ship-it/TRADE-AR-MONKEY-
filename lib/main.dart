@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -117,6 +118,7 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height:18),const Text('QUICK ACCESS',style:TextStyle(fontSize:18,fontWeight:FontWeight.bold)),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.school,color:accent),title:const Text('Learn & Guides'),subtitle:const Text('Market basics, probability and risk'),onTap:()=>setState(()=>tab=1))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:const Text('Results History'),subtitle:const Text('View admin-entered history records'),onTap:()=>setState(()=>tab=2))),
+        Card(color:panel,child:ListTile(leading:const Icon(Icons.bolt,color:accent),title:const Text('ARG V1 — Practice Mode'),subtitle:const Text('1-minute timer and Big/Small practice controls'),onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const ArgV1Page())))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.notifications,color:accent),title:const Text('Notifications'),subtitle:const Text('Read in-app announcements'),onTap:()=>setState(()=>tab=3))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.share,color:accent),title:const Text('Share with friends'),subtitle:const Text('Invite friends to TRADE AR MONEY'),onTap:shareApp)),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.support_agent,color:accent),title:const Text('Telegram Support'),subtitle:const Text('Open Telegram'),onTap:support)),
@@ -179,6 +181,56 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+class ArgV1Page extends StatefulWidget {
+  const ArgV1Page({super.key});
+  @override State<ArgV1Page> createState()=>_ArgV1PageState();
+}
+class _ArgV1PageState extends State<ArgV1Page> {
+  int remaining=60, round=1;
+  String? selected;
+  final List<String> practiceHistory=[];
+  Timer? ticker;
+  @override void initState(){super.initState();ticker=Timer.periodic(const Duration(seconds:1),(_){
+    if(!mounted)return;
+    setState(()=>remaining=remaining<=1?60:remaining-1);
+    if(remaining==60 && mounted) setState(()=>round++);
+  });}
+  @override void dispose(){ticker?.cancel();super.dispose();}
+  void choose(String value){
+    setState(()=>selected=value);
+    practiceHistory.insert(0,'Round $round • Practice choice: $value');
+    if(practiceHistory.length>10)practiceHistory.removeLast();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('$value selected for practice only. No result prediction was made.')));
+  }
+  @override Widget build(BuildContext context)=>Scaffold(
+    appBar:AppBar(title:const Text('ARG V1 • Practice Mode')),
+    body:ListView(padding:const EdgeInsets.all(18),children:[
+      Container(padding:const EdgeInsets.all(22),decoration:BoxDecoration(color:panel,borderRadius:BorderRadius.circular(20)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+        const Text('1-MINUTE ROUND TIMER',style:TextStyle(color:accent,fontWeight:FontWeight.bold)),
+        const SizedBox(height:8),Text('00:' + remaining.toString().padLeft(2,'0'),style:const TextStyle(fontSize:42,fontWeight:FontWeight.w900)),
+        Text('Practice round $round',style:const TextStyle(color:Colors.white70)),
+      ])),
+      const SizedBox(height:16),
+      const Text('BIG / SMALL',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),
+      const SizedBox(height:8),
+      const Text('Choose an option to test the controls. This does not predict the next result and does not connect to Mark Pro or a live results server.'),
+      const SizedBox(height:14),
+      Row(children:[
+        Expanded(child:FilledButton(style:FilledButton.styleFrom(backgroundColor:const Color(0xFF2E8B57)),onPressed:()=>choose('BIG'),child:const Text('BIG'))),
+        const SizedBox(width:12),
+        Expanded(child:FilledButton(style:FilledButton.styleFrom(backgroundColor:const Color(0xFFB65C5C)),onPressed:()=>choose('SMALL'),child:const Text('SMALL'))),
+      ]),
+      if(selected!=null)Padding(padding:const EdgeInsets.only(top:12),child:Text('Selected: $selected (practice only)',style:const TextStyle(color:accent,fontWeight:FontWeight.bold))),
+      const SizedBox(height:20),
+      const Text('PRACTICE HISTORY',style:TextStyle(fontSize:18,fontWeight:FontWeight.bold)),
+      const SizedBox(height:8),
+      if(practiceHistory.isEmpty)const Text('No practice selections yet.',style:TextStyle(color:Colors.white70)),
+      ...practiceHistory.map((item)=>Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:Text(item)))),
+      const SizedBox(height:12),
+      const Text('Educational practice only. No betting, payments, live predictions, or guaranteed outcomes are provided.',style:TextStyle(color:Colors.orangeAccent)),
+    ]),
+  );
+}
 class AdminPanel extends StatefulWidget {
   final SupabaseClient client;
   const AdminPanel({super.key,required this.client});
