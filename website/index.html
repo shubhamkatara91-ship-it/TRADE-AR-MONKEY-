@@ -31,10 +31,11 @@
  const status=s=>{$('status').textContent=s};
  const shareText='TRADE AR MONEY — Learn market basics, understand risk, and explore educational resources.\n\nJoin me: '+window.location.href+'\n\nEducational content only; no guaranteed results.';
  async function shareApp(){try{if(navigator.share){await navigator.share({title:'TRADE AR MONEY',text:shareText,url:window.location.href});}else if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(shareText);status('Share message copied. Send it to your friends.');}else{window.prompt('Copy this invite message:',shareText);}}catch(e){if(e&&e.name!=='AbortError')status('Sharing was not available. Copy the website link from your browser.');}}
- const shareButton=$('share-app');if(shareButton)shareButton.addEventListener('click',shareApp); let argRemaining=60,argRound=1;const argHistory=[];const argTimer=$('arg-timer');const argRoundEl=$('arg-round');
- function renderArgTimer(){if(argTimer)argTimer.textContent=String(Math.floor(argRemaining/60)).padStart(2,'0')+':'+String(argRemaining%60).padStart(2,'0');if(argRoundEl)argRoundEl.textContent=String(argRound);}
- if(argTimer){renderArgTimer();setInterval(()=>{argRemaining--;if(argRemaining<=0){argRemaining=60;argRound++;}renderArgTimer();},1000);}
- function chooseArg(value){argHistory.unshift('Round '+argRound+' · Practice choice: '+value);if(argHistory.length>10)argHistory.pop();$('arg-choice').textContent='Selected '+value+' for practice only. No prediction was made.';$('arg-history').textContent=argHistory.join('\n');}
+ const shareButton=$('share-app');if(shareButton)shareButton.addEventListener('click',shareApp); const argPeriodId=now=>[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0'),String(now.getHours()).padStart(2,'0'),String(now.getMinutes()).padStart(2,'0')].join('');
+ let argNow=new Date(),argRemaining=60-argNow.getSeconds(),argRound=argPeriodId(argNow);const argHistory=[];const argTimer=$('arg-timer');const argRoundEl=$('arg-round');
+ function renderArgTimer(){if(argTimer)argTimer.textContent=String(Math.floor(argRemaining/60)).padStart(2,'0')+':'+String(argRemaining%60).padStart(2,'0');if(argRoundEl)argRoundEl.textContent=argRound;}
+ if(argTimer){renderArgTimer();setInterval(()=>{argNow=new Date();const nextRound=argPeriodId(argNow);argRemaining=60-argNow.getSeconds();if(nextRound!==argRound){argRound=nextRound;$('arg-choice').textContent='No option selected.';}renderArgTimer();},1000);}
+ function chooseArg(value){argHistory.unshift('Period '+argRound+' · Practice choice: '+value);if(argHistory.length>10)argHistory.pop();$('arg-choice').textContent='Selected '+value+' for practice only. No prediction was made.';$('arg-history').textContent=argHistory.join('\n');}
  $('arg-big')?.addEventListener('click',()=>chooseArg('BIG'));$('arg-small')?.addEventListener('click',()=>chooseArg('SMALL'));
 const heroShare=$('share-hero');if(heroShare)heroShare.addEventListener('click',shareApp);
  if(!window.supabase){status('Content service library did not load. Check internet and reload.');return;}
