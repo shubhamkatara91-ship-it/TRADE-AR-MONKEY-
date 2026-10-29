@@ -247,6 +247,9 @@ class _ArgV1PageState extends State<ArgV1Page> {
   String round=_localPeriodId(DateTime.now());
   String? selected;
   final List<String> practiceHistory=[];
+  List<Map<String,dynamic>> liveRows=[];
+  String? liveSource, liveFetchedAt, liveError;
+  bool loadingLive=false;
   Timer? ticker;
   static String _localPeriodId(DateTime time) =>
       '${time.year.toString().padLeft(4,'0')}${time.month.toString().padLeft(2,'0')}${time.day.toString().padLeft(2,'0')}${time.hour.toString().padLeft(2,'0')}${time.minute.toString().padLeft(2,'0')}';
@@ -279,6 +282,53 @@ class _ArgV1PageState extends State<ArgV1Page> {
     if(practiceHistory.length>10)practiceHistory.removeLast();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('$value selected for practice only. No result prediction was made.')));
   }
+  Future<void> loadLiveResults() async {
+    if(loadingLive)return;
+    setState(()=>loadingLive=true);
+    try {
+      final response=await Supabase.instance.client.functions.invoke('arg-v1-results',method:HttpMethod.get);
+      final payload=response.data;
+      if(payload is! Map) throw Exception('Result API ने expected JSON object नहीं लौटाया।');
+      final raw=payload['results'];
+      if(raw is! List) throw Exception('Response schema mismatch: results array नहीं मिला।');
+      final parsed=<Map<String,dynamic>>[];
+      for(final item in raw){
+        if(item is Map) parsed.add(Map<String,dynamic>.from(item));
+      }
+      if(!mounted)return;
+      setState((){
+        liveRows=parsed;
+        liveSource=payload['source']?.toString();
+        liveFetchedAt=payload['fetchedAt']?.toString();
+        liveError=null;
+      });
+    } catch(e) {
+      if(!mounted)return;
+      setState(()=>liveError=e.toString());
+    } finally {
+      if(mounted)setState(()=>loadingLive=false);
+    }
+  }
+  Widget liveResultsPanel()=>Card(color:panel,child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+    const Text('SOURCE RESULT HISTORY',style:TextStyle(fontSize:17,fontWeight:FontWeight.bold)),
+    const SizedBox(height:6),
+    Text(liveSource==null?'Authorized read-only source is not yet configured.': 'Source: $liveSource',style:const TextStyle(color:Colors.white70)),
+    if(liveFetchedAt!=null)Text('Fetched: $liveFetchedAt',style:const TextStyle(color:Colors.white54,fontSize:12)),
+    const SizedBox(height:10),
+    SizedBox(width:double.infinity,child:OutlinedButton.icon(
+      onPressed:loadingLive?null:loadLiveResults,
+      icon:loadingLive?const SizedBox(width:16,height:16,child:CircularProgressIndicator(strokeWidth:2)):const Icon(Icons.refresh),
+      label:Text(loadingLive?'Loading…':'Refresh result history'),
+    )),
+    if(liveError!=null)Padding(padding:const EdgeInsets.only(top:8),child:Text('Result feed unavailable: $liveError',style:const TextStyle(color:Colors.orangeAccent))),
+    if(liveRows.isEmpty && liveError==null)const Padding(padding:EdgeInsets.only(top:8),child:Text('No records loaded. Configure the authorized API and refresh.',style:TextStyle(color:Colors.white70))),
+    ...liveRows.take(20).map((row)=>ListTile(
+      dense:true,contentPadding:EdgeInsets.zero,
+      leading:const Icon(Icons.history,color:accent),
+      title:Text('Period: ${row['period']??'—'}'),
+      subtitle:Text('Number: ${row['number']??'—'} • ${row['bigSmall']??'Size unknown'}${row['drawTime']==null?'':' • ${row['drawTime']}'}'),
+    )),
+  ])));
   @override Widget build(BuildContext context)=>Scaffold(
     appBar:AppBar(title:const Text('ARG V1 • WinGo 1 Minute')),
     body:ListView(padding:const EdgeInsets.all(18),children:[
@@ -294,6 +344,8 @@ class _ArgV1PageState extends State<ArgV1Page> {
         title:Text('Clock status: synchronized to this device'),
         subtitle:Text('This is a local minute period, not an official provider round ID. Live results are not connected.'),
       )),
+      const SizedBox(height:12),
+      liveResultsPanel(),
       const SizedBox(height:16),
       const Text('BIG / SMALL',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),
       const SizedBox(height:8),
