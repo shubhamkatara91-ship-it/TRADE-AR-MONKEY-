@@ -11,9 +11,10 @@
 - Server-side FCM Edge Function foundation in `supabase/functions/send-push/index.ts`.
 - Hindi setup instructions and release checklist.
 
-## Android APK build
-- GitHub Actions validation/build run `40810500955` **successful**; website HTML/JS checks and Flutter release APK compilation passed.
-- Latest build run: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40810500955
+## Automated checks and Android APK
+- Latest source validation run `40819804147` **successful**; website HTML/inline JavaScript syntax and schema access-control/idempotency checks passed: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40819804147
+- Last successful Android APK compilation run: `40810500955`: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40810500955
+- Validation and APK compilation are now separate workflows to avoid rebuilding the APK for schema/docs-only changes.
 - Latest artifact: `TRADE-AR-MONEY-release-apk-latest` (ZIP about 24.7 MB; compiled APK about 53.4 MB), artifact ID `12870113190`; it expires on 2026-11-12.
 - Download: open the latest run, open **Artifacts**, download `TRADE-AR-MONEY-release-apk-latest` ZIP, then extract the APK.
 - Build result confirms compilation only; it does not verify live Supabase configuration, hosting, push delivery, or physical-device behavior.
