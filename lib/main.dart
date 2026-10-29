@@ -288,6 +288,10 @@ class _ArgV1PageState extends State<ArgV1Page> {
   }
   Future<void> loadLiveResults() async {
     if(loadingLive)return;
+    if (Supabase.instance.client.auth.currentUser == null) {
+      setState(() => liveError = 'Source result history के लिए पहले sign in करें।');
+      return;
+    }
     setState(()=>loadingLive=true);
     try {
       final response=await Supabase.instance.client.functions.invoke('arg-v1-results',method:HttpMethod.get);
