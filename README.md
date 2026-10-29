@@ -6,7 +6,8 @@ The app includes a support button opening the supplied Telegram invite:
 https://t.me/+pmahyzLfcMA2ODZl
 
 ## Current verified status
-- Latest Android release APK compiled successfully in GitHub Actions run `40810500955`; artifact ID `12870113190` (expires 12 November 2026).
+- Latest source validation passed in GitHub Actions run `40819804147` (HTML/inline JavaScript and schema safety/idempotency checks): https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40819804147
+- Latest available successful Android APK compilation is run `40810500955`; artifact ID `12870113190` (expires 12 November 2026).
 - Flutter app source includes email/password signup, login, password reset, logout, learning articles, result-history display, announcements, and a role-gated admin interface.
 - A responsive browser website and separate admin page are present under `website/`.
 - Supabase schema and an admin-only FCM Edge Function are in the repository, but deployment/configuration of the backend and Firebase have not been confirmed.
