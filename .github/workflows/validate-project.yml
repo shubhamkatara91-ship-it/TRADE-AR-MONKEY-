@@ -6,6 +6,7 @@ on:
       - 'website/**'
       - 'supabase/**'
       - 'lib/**'
+      - 'docs/**'
       - 'pubspec.yaml'
       - '.github/workflows/validate-project.yml'
   pull_request:
