@@ -23,6 +23,6 @@ async function save(table,row){$('auth-status').textContent='Saving…';const {e
 $('publish-article').onclick=()=>{const title=$('article-title').value.trim(),body=$('article-body').value.trim();if(!title||!body){$('auth-status').textContent='Title and content required.';return;}save('learning_articles',{title,body,category:$('article-category').value.trim()||'Basics',published:true});};
 $('publish-notice').onclick=()=>{const title=$('notice-title').value.trim(),body=$('notice-body').value.trim();if(!title||!body){$('auth-status').textContent='Title and message required.';return;}save('app_notifications',{title,body,audience:'all'});};
 $('publish-result').onclick=()=>{const source=$('result-source').value.trim(),result_label=$('result-label').value.trim(),result_value=$('result-value').value.trim();if(!source||!result_label){$('auth-status').textContent='Source and result label required.';return;}save('result_history',{source,result_label,result_value:result_value||null,observed_at:new Date().toISOString()});};
-db.auth.onAuthStateChange(()=>refresh());refresh();
+db.auth.onAuthStateChange(()=>{setTimeout(()=>{refresh().catch(()=>{$('auth-status').textContent='Could not refresh account access. Please reload and sign in again.';$('tools').hidden=true;});},0);});refresh().catch(()=>{$('auth-status').textContent='Could not load account access. Please reload and sign in again.';$('tools').hidden=true;});
 })();
 </script></body></html>
