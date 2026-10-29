@@ -36,7 +36,7 @@ jobs:
               def error(self, message):
                   raise RuntimeError(message)
 
-          files = [Path("website/index.html"), Path("website/admin.html")]
+          files = sorted(Path("website").glob("*.html"))
           for path in files:
               source = path.read_text(encoding="utf-8")
               parser = CheckHTML(convert_charrefs=True)
