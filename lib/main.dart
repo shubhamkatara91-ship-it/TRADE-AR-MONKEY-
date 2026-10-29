@@ -86,6 +86,16 @@ class _HomePageState extends State<HomePage> {
     final r=await client.from('learning_articles').select('id,title,body,category').eq('published',true).order('created_at',ascending:false).limit(100);
     return List<Map<String,dynamic>>.from(r);
   }
+  Widget toolsPage()=>ListView(padding:const EdgeInsets.all(18),children:[
+    const Text('TOOLS',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),
+    const SizedBox(height:12),
+    Card(color:panel,child:ListTile(leading:const Icon(Icons.bolt,color:accent),title:const Text('WinGo — 1 Minute'),subtitle:const Text('ARG V1 practice timer and BIG/SMALL controls'),onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const ArgV1Page())))),
+    Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:const Text('Results History'),subtitle:const Text('View saved history records'),onTap:()=>setState(()=>tab=2))),
+    Card(color:panel,child:ListTile(leading:const Icon(Icons.notifications_outlined,color:accent),title:const Text('Notifications'),subtitle:const Text('Read announcements'),onTap:()=>setState(()=>tab=3))),
+    Card(color:panel,child:ListTile(leading:const Icon(Icons.workspace_premium,color:accent),title:const Text('Premium'),subtitle:const Text('View membership options'),onTap:()=>setState(()=>tab=7))),
+    Card(color:panel,child:ListTile(leading:const Icon(Icons.support_agent,color:accent),title:const Text('Support'),subtitle:const Text('Contact Telegram support'),onTap:support)),
+    Card(color:panel,child:ListTile(leading:const Icon(Icons.auto_graph,color:accent),title:const Text('AI & Market Insights'),subtitle:const Text('Historical context and risk information'),onTap:()=>showModalBottomSheet(context:context,backgroundColor:panel,builder:(_)=>const Padding(padding:EdgeInsets.all(20),child:Text('No verified live data feed or prediction model is connected. Use historical information for education only.',style:TextStyle(fontSize:16)))))),
+  ]);
   Widget insightsPage()=>ListView(padding:const EdgeInsets.all(18),children:[
     const Text('AI & MARKET INSIGHTS',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
     const SizedBox(height:12),
@@ -145,7 +155,7 @@ class _HomePageState extends State<HomePage> {
         Card(color:panel,child:ListTile(leading:const Icon(Icons.support_agent,color:accent),title:const Text('Telegram Support'),subtitle:const Text('Open Telegram'),onTap:support)),
         if(user!=null)Card(color:panel,child:ListTile(leading:const Icon(Icons.verified_user,color:accent),title:const Text('Signed in'),subtitle:Text(user.email??'Account active'))),
       ]),
-      insightsPage(),
+      toolsPage(),
       resultsPage(),
       notificationsPage(),
       ListView(padding:const EdgeInsets.all(18),children:[
