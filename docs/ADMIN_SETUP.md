@@ -44,7 +44,46 @@ Do not paste the token into issues, source files, the app, or chat. Revoke it if
 
 The workflow cannot create the Pages site if the repository's Actions token lacks that permission. Open **Settings → Pages**, select **GitHub Actions** as the build/deployment source, save, and then rerun the website deployment workflow.
 
-## 6. Release acceptance checklist
+## 6. Verify the backend before release
+
+After applying the schema, run these read-only checks in the Supabase SQL Editor:
+
+```sql
+-- Confirm the expected application tables exist.
+select table_name
+from information_schema.tables
+where table_schema = 'public'
+  and table_name in (
+    'profiles', 'result_history', 'app_notifications',
+    'learning_articles', 'device_push_tokens'
+  )
+order by table_name;
+
+-- Confirm row-level security is enabled on all application tables.
+select c.relname as table_name, c.relrowsecurity as rls_enabled
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relname in (
+    'profiles', 'result_history', 'app_notifications',
+    'learning_articles', 'device_push_tokens'
+  )
+order by c.relname;
+
+-- Inspect policy names and commands; review unexpected policies before launch.
+select tablename, policyname, roles, cmd
+from pg_policies
+where schemaname = 'public'
+  and tablename in (
+    'profiles', 'result_history', 'app_notifications',
+    'learning_articles', 'device_push_tokens'
+  )
+order by tablename, policyname;
+```
+
+Expected: all five tables are present and have `rls_enabled = true`. Review the policies against `supabase/schema.sql`; these queries inspect configuration but do not prove every user/admin scenario works. Complete the signup, ordinary-user denial, admin publish, and public-read tests using separate test accounts. Do not use production customer data for testing.
+
+## 7. Release acceptance checklist
 
 - [ ] Signup, email confirmation (if enabled), login, password reset, and logout tested.
 - [ ] Regular user cannot publish articles, notifications, or result-history rows.
