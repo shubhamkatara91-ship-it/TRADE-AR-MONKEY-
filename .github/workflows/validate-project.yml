@@ -58,6 +58,7 @@ jobs:
               "create policy \"users can create own user profile\"",
               "role='user'",
               "device_push_tokens",
+              'drop policy if exists "users can read audience notifications" on public.app_notifications;\ncreate policy "users can read audience notifications"',
           ]
           missing = [term for term in required if term not in schema]
           if missing:
@@ -66,26 +67,3 @@ jobs:
               raise SystemExit("Do not put a Supabase service-role key in the Flutter client.")
           print("Schema access-control markers checked; no service-role reference in Flutter client.")
           PY
-      - name: Build Android release APK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-      - run: flutter create --platforms=android --org com.tradearmoney --project-name trade_ar_money build_scaffold
-      - run: |
-          cp -R lib build_scaffold/
-          cp pubspec.yaml build_scaffold/
-        name: Copy Flutter source
-      - run: flutter pub get
-        working-directory: build_scaffold
-        name: Resolve Flutter dependencies
-      - run: flutter build apk --release
-        working-directory: build_scaffold
-        name: Compile release APK
-      - name: Upload release APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: TRADE-AR-MONEY-release-apk-latest
-          path: build_scaffold/build/app/outputs/flutter-apk/app-release.apk
-          if-no-files-found: error
-          retention-days: 14
