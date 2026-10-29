@@ -41,6 +41,7 @@ drop policy if exists "Users can read public notifications" on public.app_notifi
 drop policy if exists "Public notifications are readable by anyone" on public.app_notifications;
 create policy "Public notifications are readable by anyone" on public.app_notifications for select to anon using(audience='all');
 drop policy if exists "Users can read public notifications" on public.app_notifications;
+drop policy if exists "Users can read audience notifications" on public.app_notifications;
 create policy "Users can read audience notifications" on public.app_notifications for select to authenticated using(audience='all' or (audience='admins' and public.is_admin()) or (audience='users' and not public.is_admin()));
 drop policy if exists "Admins can manage notifications" on public.app_notifications;
 create policy "Admins can manage notifications" on public.app_notifications for all to authenticated using(public.is_admin()) with check(public.is_admin());
