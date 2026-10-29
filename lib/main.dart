@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> {
     if(s.connectionState==ConnectionState.waiting)return const Center(child:CircularProgressIndicator());
     if(s.hasError)return ListView(children:[errorBox(s.error!)]);
     final rows=s.data??[];
-    if(rows.isEmpty)return ListView(padding:const EdgeInsets.all(24),children:const [Icon(Icons.history,size:42,color:accent),SizedBox(height:12),Text('Results History',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),SizedBox(height:8),Text('अभी कोई verified result रिकॉर्ड नहीं है। डेटा स्रोत सत्यापित होने के बाद रिकॉर्ड यहाँ दिखेंगे।')]);
+    if(rows.isEmpty)return ListView(padding:const EdgeInsets.all(24),children:const [Icon(Icons.history,size:42,color:accent),SizedBox(height:12),Text('Results History',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),SizedBox(height:8),Text('अभी कोई result रिकॉर्ड नहीं है। रिकॉर्ड manually जोड़े जाते हैं; original source से खुद जाँचें।')]);
     return ListView(padding:const EdgeInsets.all(16),children:[const Text('RESULTS HISTORY',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),...rows.map((r)=>Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:Text('${r['result_label']}'),subtitle:Text('${r['source']} • ${r['observed_at']}'),trailing:Text('${r['result_value']??''}'))))]);
   }));
   Widget notificationsPage()=>RefreshIndicator(onRefresh:()async{setState((){});await loadNotifications();},child:FutureBuilder<List<Map<String,dynamic>>>(future:loadNotifications(),builder:(context,s){
@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
           Text('Educational content only. Live data API is not connected; no live results or guaranteed predictions are shown.',style:TextStyle(color:Colors.white70))])),
         const SizedBox(height:18),const Text('QUICK ACCESS',style:TextStyle(fontSize:18,fontWeight:FontWeight.bold)),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.school,color:accent),title:const Text('Learn & Guides'),subtitle:const Text('Market basics, probability and risk'),onTap:()=>setState(()=>tab=1))),
-        Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:const Text('Results History'),subtitle:const Text('View verified records from database'),onTap:()=>setState(()=>tab=2))),
+        Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:const Text('Results History'),subtitle:const Text('View admin-entered history records'),onTap:()=>setState(()=>tab=2))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.notifications,color:accent),title:const Text('Notifications'),subtitle:const Text('Read in-app announcements'),onTap:()=>setState(()=>tab=3))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.share,color:accent),title:const Text('Share with friends'),subtitle:const Text('Invite friends to TRADE AR MONEY'),onTap:shareApp)),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.support_agent,color:accent),title:const Text('Telegram Support'),subtitle:const Text('Open Telegram'),onTap:support)),
@@ -228,7 +228,7 @@ class _AdminPanelState extends State<AdminPanel> {
   Future<void> saveResult() async {
     if(source.text.trim().isEmpty||resultLabel.text.trim().isEmpty){message('Source और result label आवश्यक हैं।');return;}
     setState(()=>busy=true);
-    try{await widget.client.from('result_history').insert({'source':source.text.trim(),'result_label':resultLabel.text.trim(),'result_value':resultValue.text.trim().isEmpty?null:resultValue.text.trim(),'observed_at':DateTime.now().toUtc().toIso8601String()});source.clear();resultLabel.clear();resultValue.clear();message('Record save हुआ। केवल verified source का result दर्ज करें।');}
+    try{await widget.client.from('result_history').insert({'source':source.text.trim(),'result_label':resultLabel.text.trim(),'result_value':resultValue.text.trim().isEmpty?null:resultValue.text.trim(),'observed_at':DateTime.now().toUtc().toIso8601String()});source.clear();resultLabel.clear();resultValue.clear();message('Record save हुआ। Result को original source से independently verify करें।');}
     catch(e){message('Save नहीं हुआ। Admin role और database schema जाँचें।');}
     finally{if(mounted)setState(()=>busy=false);}
   }
@@ -245,10 +245,10 @@ class _AdminPanelState extends State<AdminPanel> {
       field(noticeTitle,'Announcement title'),field(noticeBody,'Message',lines:3),
       SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:saveNotice,child:const Text('Publish to all users')))
     ]),
-    section('Add verified result record',Icons.fact_check,[
+    section('Add result history record',Icons.fact_check,[
       field(source,'Source / provider'),field(resultLabel,'Result label'),field(resultValue,'Result value (optional)'),
-      SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:saveResult,child:const Text('Save verified record'))),
-      const SizedBox(height:6),const Text('This records a verified result manually; it does not connect a live API.',style:TextStyle(color:Colors.orangeAccent))
+      SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:saveResult,child:const Text('Save result record'))),
+      const SizedBox(height:6),const Text('Records are entered manually and are not independently verified by this app. Check the original source; no live API is connected.',style:TextStyle(color:Colors.orangeAccent))
     ]),
   ]));
 }
