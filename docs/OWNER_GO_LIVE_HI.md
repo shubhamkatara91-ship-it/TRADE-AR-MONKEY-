@@ -1,10 +1,10 @@
 # TRADE AR MONEY — Owner Go-Live Steps (Hindi)
 
-यह guide सिर्फ उन कामों के लिए है जिन्हें repository code अकेले पूरा नहीं कर सकता। APK compilation सफल है; इसका मतलब live backend/website का end-to-end test सफल होना नहीं है।
+यह guide उन कामों के लिए है जिन्हें repository code अकेले पूरा नहीं कर सकता। APK compilation सफल है; इसका मतलब live backend/website का end-to-end test सफल होना नहीं है।
 
 ## 1. APK install करें
 1. [Latest successful Android build](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40824384462) खोलें।
-2. नीचे **Artifacts** में `TRADE-AR-MONEY-release-apk-latest` ZIP डाउनलोड करें (artifact ID `12875244231`, expiry 27 January 2027).
+2. नीचे **Artifacts** में `TRADE-AR-MONEY-release-apk-latest` ZIP डाउनलोड करें (artifact expiry 27 January 2027)।
 3. ZIP extract करें और APK को अपने Android phone पर install करें।
 4. केवल official repo के artifact का उपयोग करें। Android unknown-app install permission पूछ सकता है।
 
@@ -29,11 +29,14 @@ where id = 'PASTE_YOUR_AUTH_USER_UUID_HERE';
 4. Query के बाद affected rows 1 होनी चाहिए। App/website से logout करके फिर login करें।
 5. किसी दूसरे व्यक्ति को admin role न दें, जब तक आप उस व्यक्ति को अधिकृत न करते हों।
 
-## 4. Website publish करें
-1. [Repository Pages settings](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages) खोलें।
-2. **Build and deployment → Source** में **GitHub Actions** चुनकर Save करें।
+## 4. Website publish करें — जरूरी manual step
+पिछला deployment run GitHub Pages site को पढ़/बना नहीं पाया: GitHub ने `Get Pages site: Not Found` और `Create Pages site: Resource not accessible by integration` लौटाया। Workflow code repository permissions से Pages को पहली बार enable नहीं कर सकता।
+
+1. Repository owner अपने account से [Repository Pages settings](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages) खोलें।
+2. **Build and deployment → Source** में **GitHub Actions** चुनकर Save करें। अगर विकल्प उपलब्ध न हो, repository/organization की Pages policy या access permission owner को ठीक करनी होगी।
 3. [GitHub Actions](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions) खोलें, **Deploy TRADE AR MONEY website** workflow चुनें और **Run workflow** करें।
-4. Workflow सफल होने पर उसके deployment output में दिए गए URL को खोलें। सिर्फ URL खुलना काफी नहीं—login, published articles, announcements और admin access test करें।
+4. Workflow सफल होने पर deployment output में दिया गया URL खोलें। सिर्फ URL खुलना काफी नहीं—login, published articles, announcements और admin access test करें।
+5. यदि deployment फिर fail हो, उस नए run का error पढ़ें; live website को सफल घोषित न करें।
 
 ## 5. जरूरी acceptance tests
 - Normal user login/signup/reset/logout कर पाए।
