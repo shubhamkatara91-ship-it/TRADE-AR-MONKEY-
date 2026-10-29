@@ -77,6 +77,7 @@ jobs:
           site = Path("website/index.html").read_text(encoding="utf-8")
           admin = Path("website/admin.html").read_text(encoding="utf-8")
           push = Path("supabase/functions/send-push/index.ts").read_text(encoding="utf-8")
+          feed = Path("supabase/functions/arg-v1-results/index.ts").read_text(encoding="utf-8")
           schema = Path("supabase/schema.sql").read_text(encoding="utf-8").lower()
           app = Path("lib/main.dart").read_text(encoding="utf-8")
 
@@ -114,6 +115,14 @@ jobs:
               "push title and body lengths are capped": '.trim().slice(0, 100)' in push and '.trim().slice(0, 500)' in push,
               "push endpoint reads enabled tokens with a bounded query": '.from("device_push_tokens").select("token").eq("enabled", true).limit(500)' in push,
               "push errors do not return raw provider responses": 'FCM send failed. Verify the server-side Firebase service-account secret.' in push and 'return response({ error: tokenError.message' not in push,
+              "results adapter accepts GET only": 'if (req.method !== "GET")' in feed,
+              "results adapter requires HTTPS": 'parsedUrl.protocol !== "https:"' in feed,
+              "results adapter enforces exact hostname allowlist": 'allowedHosts.includes(parsedUrl.hostname.toLowerCase())' in feed,
+              "results adapter blocks upstream redirects": 'redirect: "error"' in feed,
+              "results adapter has an upstream timeout": 'setTimeout(() => controller.abort(), 8000)' in feed,
+              "results adapter bounds upstream response size": 'readBoundedBody(upstream, 1_000_000)' in feed,
+              "results adapter limits returned rows": 'rawRows.slice(0, 100)' in feed,
+              "results adapter does not expose bet or payment operations": all(term not in feed.lower() for term in ['place bet', '/deposit', '/withdraw', 'payment verification']),
               "push endpoint uses authenticated JWT for role check": 'global: { headers: { Authorization: authorization } }' in push,
               "result history writes require admin": 'create policy "admins can manage result history" on public.result_history for all to authenticated using(public.is_admin()) with check(public.is_admin());' in schema,
               "article writes require admin": 'create policy "admins can manage learning articles" on public.learning_articles for all to authenticated using(public.is_admin()) with check(public.is_admin());' in schema,
