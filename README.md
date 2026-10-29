@@ -13,6 +13,8 @@ Flutter Android app and responsive website for an educational community.
 - A responsive browser website and separate admin page are present under `website/`.
 - Supabase schema is in `supabase/schema.sql`; it must be applied and tested in the intended Supabase project before launch.
 - **Website deployment is not yet verified as live.** Repository owner must first enable GitHub Pages as described below.
+- **Login validation fix:** Existing accounts are no longer blocked by the app's 8-character signup-password rule; new signups still require at least 8 characters. Website login now displays clearer messages for common authentication failures. This is code-level validation only; end-to-end login still requires testing against the configured Supabase project.
+- **Latest APK build with login fix:** [run 40871081013](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40871081013). Check its final status and Artifacts section before installing; a running build is not a downloadable APK.
 
 ## Download the Android APK
 
