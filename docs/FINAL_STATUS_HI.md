@@ -12,14 +12,14 @@
 - Hindi setup instructions and release checklist.
 
 ## Android APK build
-- GitHub Actions validation/build run #3 **successful**; website HTML/JS checks and Flutter release APK compilation passed.
-- Latest build run: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40751865217
-- Latest artifact: `TRADE-AR-MONEY-release-apk-latest` (about 24.7 MB), artifact ID `12844062181`; it expires on 2026-11-11.
+- GitHub Actions validation/build run `40810500955` **successful**; website HTML/JS checks and Flutter release APK compilation passed.
+- Latest build run: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40810500955
+- Latest artifact: `TRADE-AR-MONEY-release-apk-latest` (ZIP about 24.7 MB; compiled APK about 53.4 MB), artifact ID `12870113190`; it expires on 2026-11-12.
 - Download: open the latest run, open **Artifacts**, download `TRADE-AR-MONEY-release-apk-latest` ZIP, then extract the APK.
 - Build result confirms compilation only; it does not verify live Supabase configuration, hosting, push delivery, or physical-device behavior.
 
 ## अभी भी blocked / unverified
-1. **Website deployment:** latest run #14 failed in `actions/configure-pages` because GitHub integration cannot create the repository Pages site. Latest run: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40750362033
+1. **Website deployment:** still requires owner-side GitHub Pages enablement. Open https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages and choose **Build and deployment → Source: GitHub Actions**; then rerun the deployment workflow.
 2. **Supabase schema:** `supabase/schema.sql` is committed, but its execution against the live project and live RLS behavior have not been verified.
 3. **First admin:** the intended owner account must be assigned `role='admin'` in Supabase SQL Editor.
 4. **Push notifications:** Firebase Android setup, device-token registration, FCM secret, Edge Function deployment and physical-device delivery test are not complete.
