@@ -4,9 +4,10 @@ Flutter Android app and responsive website for an educational community.
 
 ## Current verified status
 
-- **Latest confirmed successful Android APK build:** [GitHub Actions run 40857879014](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40857879014), commit `adbe6c5888c03522ff7f51923b2282bd9b3ef601`. This build includes automatic result-history loading when the ARG V1 screen opens.
-- **APK artifact:** `TRADE-AR-MONEY-release-apk-latest` (ZIP, about 24.8 MB); download from the run's **Artifacts** section. Build artifacts expire; use the newest successful run.
-- **Latest confirmed successful source validation:** [run 40857936938](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40857936938).
+- **Latest confirmed successful Android APK build before the current commit:** [GitHub Actions run 40868195894](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40868195894), commit `ac8c669d3972b290f494302a81ece6509125578c`. This includes the capital-specific practice stake plans.
+- **Current APK build:** [run 40869376096](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40869376096), commit `3e059e3cef93e7f10fff8a5a08293b947099bcbd`. It adds a practice round timer and duplicate-outcome protection; do not call its artifact available until the run succeeds.
+- **APK artifact:** `TRADE-AR-MONEY-release-apk-latest` ZIP; download from the successful run's **Artifacts** section. Build artifacts expire; use the newest successful run.
+- **Latest confirmed successful source validation:** [run 40869376091](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40869376091).
 - The current Tools section exposes ARG V1; its one-minute timer starts automatically. BIG/SMALL choices are practice selections, not verified predictions.
 - Flutter source includes email/password signup, login, password reset, logout, learning articles, result-history display, announcements, support, and role-gated admin features.
 - A responsive browser website and separate admin page are present under `website/`.
@@ -15,9 +16,9 @@ Flutter Android app and responsive website for an educational community.
 
 ## Download the Android APK
 
-1. Open the [latest confirmed successful Android build](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40857879014) and download `TRADE-AR-MONEY-release-apk-latest` under **Artifacts**. This build includes automatic result-history loading.
+1. Open the [latest successful APK run](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40868195894), or the current run above once it succeeds.
 2. Under **Artifacts**, download `TRADE-AR-MONEY-release-apk-latest`.
-3. Extract the ZIP and install the APK on Android.
+3. Extract the ZIP and install `TRADE-AR-MONEY.apk` on Android.
 
 This is a CI-compiled APK. A successful build does not certify production signing, installation on every device, or end-to-end backend testing. Use the artifact's checksum file if included to verify download integrity. Workflow artifacts expire.
 
