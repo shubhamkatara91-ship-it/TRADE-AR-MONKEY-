@@ -3,8 +3,8 @@
 यह guide सिर्फ उन कामों के लिए है जिन्हें repository code अकेले पूरा नहीं कर सकता। APK compilation सफल है; इसका मतलब live backend/website का end-to-end test सफल होना नहीं है।
 
 ## 1. APK install करें
-1. [Latest successful Android build](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40810500955) खोलें।
-2. नीचे **Artifacts** में `TRADE-AR-MONEY-release-apk-latest` ZIP डाउनलोड करें (artifact ID `12870113190`, expiry 12 November 2026).
+1. [Latest successful Android build](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40824384462) खोलें।
+2. नीचे **Artifacts** में `TRADE-AR-MONEY-release-apk-latest` ZIP डाउनलोड करें (artifact ID `12875244231`, expiry 27 January 2027).
 3. ZIP extract करें और APK को अपने Android phone पर install करें।
 4. केवल official repo के artifact का उपयोग करें। Android unknown-app install permission पूछ सकता है।
 
