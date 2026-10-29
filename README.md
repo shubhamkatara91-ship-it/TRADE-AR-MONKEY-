@@ -11,7 +11,7 @@ Flutter Android app and responsive website for an educational community.
 - Flutter source includes email/password signup, login, password reset, logout, learning articles, result-history display, announcements, support, and role-gated admin features.
 - A responsive browser website and separate admin page are present under `website/`.
 - Supabase schema is in `supabase/schema.sql`; it must be applied and tested in the intended Supabase project before launch.
-- Website hosting and production backend setup must be verified by the owner before public launch.
+- **Website deployment is not yet verified as live.** Repository owner must first enable GitHub Pages as described below.
 
 ## Download the Android APK
 
@@ -23,12 +23,12 @@ This is a CI-compiled APK. A successful build does not certify production signin
 
 ## Website deployment
 
-The website deployment workflow is `.github/workflows/deploy-website.yml`. A repository owner may need to enable GitHub Pages under **Settings → Pages → Build and deployment → Source: GitHub Actions** and then run the **Deploy TRADE AR MONEY website** workflow.
+The deployment workflow is `.github/workflows/deploy-website.yml`. The earlier deployment failed because GitHub Pages was not enabled and the integration could not create the Pages site due to repository permissions. The workflow no longer attempts to enable Pages automatically.
 
-- [Repository Pages settings](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages)
-- [GitHub Actions](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions)
-
-After deployment, test signup/login, published articles, announcements, and admin authorization on the live site. A page loading successfully is not enough to establish that the backend is configured correctly.
+1. The repository owner opens [Repository Pages settings](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages).
+2. Under **Build and deployment → Source**, select **GitHub Actions** and save. If this setting is unavailable, the owner must resolve repository/organization policy or permission restrictions.
+3. Open [GitHub Actions](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions), select **Deploy TRADE AR MONEY website**, and click **Run workflow**.
+4. Verify the deployment run succeeds, then test signup/login, published articles, announcements, and admin authorization on the live site. A page loading successfully is not enough to establish that the backend is configured correctly.
 
 ## Apply the Supabase schema
 
