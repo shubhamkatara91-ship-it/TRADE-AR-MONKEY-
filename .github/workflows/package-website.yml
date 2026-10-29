@@ -1,0 +1,53 @@
+name: Package TRADE AR MONEY website
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+      - '.github/workflows/package-website.yml'
+permissions:
+  contents: read
+concurrency:
+  group: trade-ar-money-website-package-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify required website files
+        run: |
+          test -s website/index.html
+          test -s website/admin.html
+          test -s website/privacy.html
+          test -s website/terms.html
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          class Parser(HTMLParser):
+              pass
+          for path in sorted(Path("website").glob("*.html")):
+              parser = Parser()
+              parser.feed(path.read_text(encoding="utf-8"))
+              parser.close()
+              print(f"Validated HTML structure: {path}")
+          PY
+      - name: Create static website bundle
+        run: |
+          mkdir -p release_bundle
+          cp -R website/. release_bundle/
+          printf 'TRADE AR MONEY static website bundle\nCommit: %s\nBuilt at (UTC): %s\n\nDeploy the contents of this folder to a static host. Configure the Supabase project and review privacy/terms placeholders before public launch.\n' "${GITHUB_SHA}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > release_bundle/BUILD_INFO.txt
+          cd release_bundle
+          zip -qr ../TRADE-AR-MONEY-website.zip .
+          cd ..
+          sha256sum TRADE-AR-MONEY-website.zip > TRADE-AR-MONEY-website-SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TRADE-AR-MONEY-static-website
+          path: |
+            TRADE-AR-MONEY-website.zip
+            TRADE-AR-MONEY-website-SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 30
