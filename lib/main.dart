@@ -107,27 +107,27 @@ class _HomePageState extends State<HomePage> {
     if(!(formKey.currentState?.validate()??false)) return;
     final e=email.text.trim();
     final p=password.text;
-    if(p.isEmpty){msg('Password लिखें।');return;}
     if(signup && p.length<8){msg('नया password कम-से-कम 8 अक्षर का होना चाहिए।');return;}
+    if(signup && p!=confirmPassword.text){msg('Password और Confirm Password match नहीं करते।');return;}
+    if(signup && username.text.trim().length<3){msg('Username कम-से-कम 3 अक्षर का होना चाहिए।');return;}
+    final phone=mobile.text.trim();
+    final digits=phone.replaceAll('+','');
+    if(signup && (digits.length<10 || digits.length>15 || !digits.split('').every((c)=>'0123456789'.contains(c)))){msg('Mobile number 10 से 15 digits का लिखें।');return;}
     setState(()=>busy=true);
     try {
       if(signup){
-        if(username.text.trim().length<3){msg('Username कम-से-कम 3 अक्षर का होना चाहिए।');return;}
-        if(!RegExp(r'^\+?[0-9]{10,15}
+        final r=await client.auth.signUp(email:e,password:p,data:{'username':username.text.trim(),'mobile':phone});
         if(mounted && r.session!=null){setState(()=>tab=0);}
         msg(r.session==null?'Signup request भेजी गई। Email confirmation चालू हो तो email verify करके फिर login करें।':'Account बन गया और login सफल।');
       } else {
         await client.auth.signInWithPassword(email:e,password:p);
-        if(mounted){
-          setState(()=>tab=0);
-          FocusManager.instance.primaryFocus?.unfocus();
-        }
+        if(mounted){setState(()=>tab=0);FocusManager.instance.primaryFocus?.unfocus();}
         msg('Login सफल। Home खुल गया।');
       }
     } on AuthException catch(e){
       final m=e.message.toLowerCase();
       if(m.contains('invalid login credentials')){msg('Email या password सही नहीं है। Email की spelling जाँचें या Forgot password इस्तेमाल करें.');}
-      else if(m.contains('email not confirmed')){msg('Email अभी verify नहीं हुई। Inbox/Spam में verification link देखें.');}
+      else if(m.contains('email not confirmed')){msg('Email अभी verify नहीं हुई। Inbox/Spam में verification email देखें.');}
       else if(m.contains('rate limit')||m.contains('too many requests')){msg('बहुत बार कोशिश हुई है। थोड़ी देर बाद फिर प्रयास करें.');}
       else if(m.contains('already registered')){msg('यह email पहले से registered है। Log in करें या password reset करें.');}
       else {msg('Authentication error: ${e.message}');}
@@ -245,7 +245,13 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height:16),Form(key:formKey,child:Column(children:[
             TextFormField(controller:username,autofillHints:const[AutofillHints.username],decoration:const InputDecoration(labelText:'Username'),validator:(v)=>(v??'').trim().length>=3?null:'Username कम-से-कम 3 अक्षर का होना चाहिए।'),
             const SizedBox(height:12),TextFormField(controller:email,keyboardType:TextInputType.emailAddress,autofillHints:const[AutofillHints.email],decoration:const InputDecoration(labelText:'Email ID'),validator:(v){final x=(v??'').trim();return x.contains('@')&&x.contains('.')?null:'सही email लिखें।';}),
-            const SizedBox(height:12),TextFormField(controller:mobile,keyboardType:TextInputType.phone,autofillHints:const[AutofillHints.telephoneNumber],decoration:const InputDecoration(labelText:'Mobile Number'),validator:(v)=>RegExp(r'^\\+?[0-9]{10,15}
+            const SizedBox(height:12),TextFormField(controller:mobile,keyboardType:TextInputType.phone,autofillHints:const[AutofillHints.telephoneNumber],decoration:const InputDecoration(labelText:'Mobile Number'),validator:(v){final n=(v??'').trim().replaceAll('+','');return n.length>=10&&n.length<=15&&n.split('').every((c)=>'0123456789'.contains(c))?null:'10 से 15 digits का mobile number लिखें।';}),
+            const SizedBox(height:12),TextFormField(controller:password,obscureText:!showPassword,autofillHints:const[AutofillHints.newPassword],decoration:InputDecoration(labelText:'Password (minimum 8 characters)',suffixIcon:IconButton(onPressed:()=>setState(()=>showPassword=!showPassword),icon:Icon(showPassword?Icons.visibility_off:Icons.visibility))),validator:(v)=>(v??'').length>=8?null:'Password कम-से-कम 8 अक्षर का होना चाहिए।'),
+            const SizedBox(height:12),TextFormField(controller:confirmPassword,obscureText:!showPassword,decoration:const InputDecoration(labelText:'Confirm Password'),validator:(v)=>(v??'')==password.text?null:'दोनों password match होने चाहिए।'),
+            const SizedBox(height:14),SizedBox(width:double.infinity,child:FilledButton(onPressed:busy?null:()=>auth(true),child:Text(busy?'Please wait…':'Create Account'))),
+            SizedBox(width:double.infinity,child:OutlinedButton(onPressed:busy?null:()=>auth(false),child:const Text('Log in'))),
+            TextButton(onPressed:busy?null:resetPassword,child:const Text('Forgot password?')),
+          ])),
         ]else ...[
           Card(color:panel,child:ListTile(leading:const Icon(Icons.account_circle,color:accent),title:const Text('Signed in as'),subtitle:Text(user.email??'Email unavailable'))),
           FutureBuilder<Map<String,dynamic>?>(
