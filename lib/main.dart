@@ -130,6 +130,7 @@ class _HomePageState extends State<HomePage> {
       else if(m.contains('email not confirmed')){msg('Email अभी verify नहीं हुई। Inbox/Spam में verification email देखें.');}
       else if(m.contains('rate limit')||m.contains('too many requests')){msg('बहुत बार कोशिश हुई है। थोड़ी देर बाद फिर प्रयास करें.');}
       else if(m.contains('already registered')){msg('यह email पहले से registered है। Log in करें या password reset करें.');}
+      else if(m.contains('profiles_username_lower_unique')||m.contains('duplicate key')||m.contains('username')){msg('यह username पहले से इस्तेमाल हो सकता है। दूसरा username चुनें और फिर कोशिश करें.');}
       else {msg('Authentication error: ${e.message}');}
     } catch(_){msg('कनेक्शन नहीं हुआ। इंटरनेट और Supabase URL/anon key की जाँच करें।');}
     finally{if(mounted)setState(()=>busy=false);}
