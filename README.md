@@ -42,7 +42,7 @@ Do not promote an account to admin unless it is the intended owner account. Neve
 
 ## Mark Pro / official provider integration
 
-Read [Hindi integration requirements](docs/MARK_PRO_INTEGRATION_HI.md) before connecting any external WinGo provider. No public, authorized Mark Pro API documentation was found in the reviewed search results, so no private Mark Pro code or server has been copied and no live connection is claimed. Integration requires official documentation, written permission, and server-side credentials.
+The uploaded APK has now been statically inspected; see [Mark Pro APK review (Hindi)](docs/MARK_PRO_APK_REVIEW_HI.md) for verified embedded strings and limitations. Read [Hindi integration requirements](docs/MARK_PRO_INTEGRATION_HI.md) before connecting any external WinGo provider. No public, authorized Mark Pro API documentation was found in the reviewed search results, so no private Mark Pro code or server has been copied and no live connection is claimed. Integration requires official documentation, written permission, and server-side credentials.
 
 ## Live results and notifications
 
