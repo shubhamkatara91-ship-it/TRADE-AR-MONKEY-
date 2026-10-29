@@ -177,6 +177,17 @@ class _HomePageState extends State<HomePage> {
     const SizedBox(height:10),
     const Text('Note: live results/predictions are not connected. This tool does not generate or claim live signals.',style:TextStyle(color:Colors.orangeAccent)),
   ]);
+  Widget profitPage()=>ListView(padding:const EdgeInsets.all(18),children:[
+    const Text('PROFIT',style:TextStyle(fontSize:24,fontWeight:FontWeight.w900)),
+    const SizedBox(height:8),
+    const Text('Track verified results only. This app is educational; it does not connect to a live trading or results API.',style:TextStyle(color:Colors.white70)),
+    const SizedBox(height:18),
+    Card(color:panel,child:const ListTile(leading:Icon(Icons.account_balance_wallet_outlined,color:accent,size:30),title:Text('Profit & Loss Tracker'),subtitle:Text('No verified transaction records are connected yet. No profit amount is estimated or fabricated.'))),
+    Card(color:panel,child:const ListTile(leading:Icon(Icons.calculate_outlined,color:accent),title:Text('Basic calculation'),subtitle:Text('Net P/L = total realized gains − total realized losses − fees. Include only completed, verifiable transactions.'))),
+    Card(color:panel,child:const ListTile(leading:Icon(Icons.shield_outlined,color:accent),title:Text('Risk reminder'),subtitle:Text('Past performance does not guarantee future results. Never treat random outcomes as guaranteed profit.'))),
+    const SizedBox(height:8),
+    SizedBox(width:double.infinity,child:OutlinedButton.icon(onPressed:()=>setState(()=>tab=2),icon:const Icon(Icons.history),label:const Text('Open Results History'))),
+  ]);
   Widget insightsPage()=>ListView(padding:const EdgeInsets.all(18),children:[
     const Text('AI & MARKET INSIGHTS',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
     const SizedBox(height:12),
@@ -297,6 +308,7 @@ class _HomePageState extends State<HomePage> {
         SizedBox(width:double.infinity,child:FilledButton.icon(onPressed:support,icon:const Icon(Icons.send),label:const Text('Open Telegram Support'))),
       ]),
       const VipMembershipPage(),
+      profitPage(),
     ];
     if(user==null){
       return Scaffold(
@@ -308,9 +320,9 @@ class _HomePageState extends State<HomePage> {
       IconButton(onPressed:()=>setState(()=>tab=3),tooltip:'Notifications',icon:const Icon(Icons.notifications_outlined,color:accent)),
       IconButton(onPressed:shareApp,tooltip:'Share app',icon:const Icon(Icons.share_outlined,color:accent)),
       IconButton(onPressed:support,tooltip:'Telegram Support',icon:const Icon(Icons.support_agent,color:accent))]),
-      body:pages[tab],bottomNavigationBar:NavigationBar(backgroundColor:panel,selectedIndex:tab==0?0:tab==5?1:tab==1?2:0,onDestinationSelected:(v){
+      body:pages[tab],bottomNavigationBar:NavigationBar(backgroundColor:panel,selectedIndex:tab==0?0:tab==8?1:tab==1?2:0,onDestinationSelected:(v){
         if(v==0){setState(()=>tab=0);}
-        else if(v==1){setState(()=>tab=5);}
+        else if(v==1){setState(()=>tab=8);}
         else if(v==2){setState(()=>tab=1);}
         else if(v==3){logout();}
       },destinations:const[
