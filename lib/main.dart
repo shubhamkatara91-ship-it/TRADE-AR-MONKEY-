@@ -505,34 +505,47 @@ class AutoBetPracticePage extends StatefulWidget {
 class _AutoBetPracticePageState extends State<AutoBetPracticePage> {
   final List<int> capitals = [300, 500, 1000, 2000];
   final List<int> targets = [15, 30, 45, 90];
+  final List<int> betByLevel = [5, 12, 29, 70, 168];
   int capital = 300, targetPercent = 15, maxLevel = 5, level = 1;
   double practicePnl = 0;
   bool running = false, stopped = false;
   String stopReason = 'Practice session not started';
   final List<String> history = [];
   double get targetAmount => capital * targetPercent / 100;
+  int get currentPracticeBet => betByLevel[level - 1];
+  double get remainingCapital => capital + practicePnl;
   double get progress => targetAmount <= 0 ? 0 : (practicePnl / targetAmount).clamp(0.0, 1.0);
 
   void startSession() {
     setState(() {
       running = true; stopped = false; level = 1; practicePnl = 0;
       stopReason = 'Practice session running'; history.clear();
-      history.insert(0, 'Practice session started • Capital reference ₹$capital • Target $targetPercent%');
+      history.insert(0, 'Practice session started • Capital reference ₹$capital • Target $targetPercent% • Practice only');
     });
   }
   void logOutcome(bool win) {
     if (!running || stopped) return;
-    const double simulatedRate = 0.05;
-    final delta = capital * simulatedRate * (win ? 1 : -1);
+    final bet = currentPracticeBet;
+    if (!win && remainingCapital < bet) {
+      setState(() { running = false; stopped = true; stopReason = 'Practice capital limit reached — session stopped'; history.insert(0, 'Stopped: remaining practice capital is below the Level $level stake ₹$bet.'); });
+      return;
+    }
+    // 1:1 is an illustrative simulator assumption, not a real-game payout claim.
+    final delta = win ? bet.toDouble() : -bet.toDouble();
     setState(() {
       practicePnl += delta;
-      history.insert(0, 'Level $level • ${win ? 'Practice win' : 'Practice loss'} • ${delta >= 0 ? '+' : '-'}₹${delta.abs().toStringAsFixed(2)} • Simulated only');
+      history.insert(0, 'Level $level • Practice bet ₹$bet • ${win ? 'WIN' : 'LOSS'} • ${delta >= 0 ? '+' : '-'}₹${delta.abs().toStringAsFixed(2)} simulated P/L (illustrative 1:1)');
       if (practicePnl >= targetAmount) {
         running = false; stopped = true; stopReason = 'Target reached — practice stopped';
-      } else if (!win) {
-        if (level >= maxLevel) {
-          running = false; stopped = true; stopReason = 'Level $maxLevel loss limit reached — practice stopped';
-        } else { level += 1; }
+      } else if (win) {
+        level = 1;
+      } else if (level >= maxLevel) {
+        running = false; stopped = true; stopReason = 'Level $maxLevel loss limit reached — practice stopped';
+      } else {
+        level += 1;
+      }
+      if (running && remainingCapital < currentPracticeBet) {
+        running = false; stopped = true; stopReason = 'Remaining practice capital is below the next level stake — session stopped';
       }
     });
   }
