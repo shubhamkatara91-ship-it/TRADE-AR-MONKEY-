@@ -5,6 +5,7 @@ on:
     paths:
       - 'website/**'
       - 'supabase/**'
+      - 'docs/**'
       - 'lib/**'
       - 'pubspec.yaml'
       - '.github/workflows/validate-project.yml'
