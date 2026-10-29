@@ -1,49 +1,56 @@
 # TRADE AR MONEY
+
 Flutter Android app and responsive website for an educational community.
 
-## Customer support
-The app includes a **Share with friends** action in the app bar, Home and Community screens. Android opens the system share sheet; the invite currently points to this public GitHub repository because GitHub Pages hosting is not enabled yet. The website has Share buttons that use the current page URL and fall back to copying the invite text when supported. Sharing code is committed, but the newly triggered APK build and website hosting are not yet confirmed successful.
-
-The app includes a support button opening the supplied Telegram invite:
-https://t.me/+pmahyzLfcMA2ODZl
-
 ## Current verified status
-- Latest source validation passed in GitHub Actions run `40820147307` (HTML/inline JavaScript and schema safety/idempotency checks): https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820147307
-- Share-with-friends changes are committed. The APK build including these buttons succeeded in run `40820133635`: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820133635.
-- A follow-up build is packaging the APK with a build-info file and SHA-256 checksum in run `40821200945`: https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40821200945. Wait for it to finish before using that bundle; the prior successful build artifact remains available as a fallback.
-- Flutter app source includes email/password signup, login, password reset, logout, learning articles, result-history display, announcements, and a role-gated admin interface.
+
+- **Latest successful Android APK build:** [GitHub Actions run 40824384462](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40824384462).
+- **APK artifact:** `TRADE-AR-MONEY-release-apk-latest` (ZIP bundle, about 24.7 MB; artifact expires 27 January 2027).
+- **Latest source validation:** [GitHub Actions run 40824713008](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40824713008).
+- The current Tools section exposes ARG V1; its one-minute timer starts automatically. BIG/SMALL choices are practice selections, not verified predictions.
+- Flutter source includes email/password signup, login, password reset, logout, learning articles, result-history display, announcements, support, and role-gated admin features.
 - A responsive browser website and separate admin page are present under `website/`.
-- Supabase schema and an admin-only FCM Edge Function are in the repository, but deployment/configuration of the backend and Firebase have not been confirmed.
-- Website deployment is currently blocked: GitHub Actions reports `Resource not accessible by integration` while trying to create the GitHub Pages site. The connected GitHub integration cannot change that repository-level setting.
-- No authorized live results API is connected. The app must not show invented outcomes as live results.
+- Supabase schema is in `supabase/schema.sql`; it must be applied and tested in the intended Supabase project before launch.
+- Website hosting and production backend setup must be verified by the owner before public launch.
 
 ## Download the Android APK
-Open the [latest successful build with Share buttons](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820133635), scroll to **Artifacts**, and download the APK bundle. The follow-up packaging build is tracked [here](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40821200945); once successful, use its `TRADE-AR-MONEY-release-apk-latest` artifact, which includes `TRADE-AR-MONEY.apk`, `BUILD_INFO.txt`, and `SHA256SUMS.txt`.
 
-Extract the ZIP, then install the APK on Android. The checksum can be used to verify the file was downloaded intact. This confirms compilation only; it does not prove production signing or end-to-end device/backend testing. Workflow artifacts expire.
+1. Open the [latest successful Android build](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40824384462).
+2. Under **Artifacts**, download `TRADE-AR-MONEY-release-apk-latest`.
+3. Extract the ZIP and install the APK on Android.
 
-## Client handover
+This is a CI-compiled APK. A successful build does not certify production signing, installation on every device, or end-to-end backend testing. Use the artifact's checksum file if included to verify download integrity. Workflow artifacts expire.
 
-The client handover pack is available at [docs/CLIENT_HANDOFF_HI.md](docs/CLIENT_HANDOFF_HI.md), with release gates and owner-side setup steps.
+## Website deployment
 
-## Website deployment blocker
-Latest attempt:
-https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820990283
+The website deployment workflow is `.github/workflows/deploy-website.yml`. A repository owner may need to enable GitHub Pages under **Settings → Pages → Build and deployment → Source: GitHub Actions** and then run the **Deploy TRADE AR MONEY website** workflow.
 
-A repository owner must enable GitHub Pages once in **Settings → Pages → Build and deployment → Source: GitHub Actions**:
-https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages
+- [Repository Pages settings](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages)
+- [GitHub Actions](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions)
 
-After that, rerun the **Deploy TRADE AR MONEY website** workflow from Actions. The current GitHub integration cannot grant itself the repository permission needed to create the Pages site.
+After deployment, test signup/login, published articles, announcements, and admin authorization on the live site. A page loading successfully is not enough to establish that the backend is configured correctly.
 
 ## Apply the Supabase schema
-Run the full current `supabase/schema.sql` in the SQL Editor of the Supabase project configured in `lib/main.dart`. Then follow:
-- [Hindi setup and notification guide](docs/NOTIFICATIONS_SETUP_HI.md)
-- [Supabase schema](supabase/schema.sql)
 
-The schema has not been verified as applied to the live project. Create the first admin only by updating the intended account's `profiles.role` in the Supabase SQL Editor, then test both admin and normal-user access.
+1. Open the [Supabase Dashboard](https://supabase.com/dashboard) and select the project configured in the app.
+2. Open **SQL Editor → New query**.
+3. Copy the complete current `supabase/schema.sql` into the editor and run it.
+4. Verify that the expected tables exist and test access as both a normal user and an admin.
+5. Follow [Hindi owner go-live steps](docs/OWNER_GO_LIVE_HI.md) and [notification setup guide](docs/NOTIFICATIONS_SETUP_HI.md).
 
-## Notifications
-In-app announcements use Supabase Realtime only after the schema is applied and `app_notifications` is enabled for Realtime. Android push/lock-screen notifications are not live: Firebase project configuration, client token registration, and server-side FCM secrets are still required. Never commit Firebase service-account JSON or Supabase service-role keys to this repository.
+Do not promote an account to admin unless it is the intended owner account. Never place a Supabase service-role key, Firebase service-account JSON, or other private server credential in the app, website JavaScript, or repository.
 
-## Data and safety
-This project is configured as an educational community, not a betting/gambling app. It does not include a live WinGo/BDG feed, real-money prediction, or guaranteed signals. Connect only a documented API you own or are authorized to use. Historical outcomes cannot guarantee future results.
+## Live results and notifications
+
+- **No authorized live WinGo/BDG results API is connected.** Only use results from an authorized provider with documented API access. Do not label manually entered history or practice choices as live results.
+- ARG V1's automatic one-minute timer is a UI timer; it does not fetch real results or make guaranteed predictions.
+- In-app announcements depend on the Supabase schema and Realtime configuration being applied.
+- Android push notifications require Firebase setup, device-token registration, secure server-side FCM credentials, and real-device testing.
+
+## Privacy and terms
+
+The [Privacy Policy](docs/PRIVACY_POLICY.md) and [Terms of Use](docs/TERMS_OF_USE.md) are drafts. Add a monitored owner/support contact, verify actual data practices, and obtain appropriate legal review before public release.
+
+## Security and product scope
+
+TRADE AR MONEY is intended as an educational community, not a betting or gambling service. It does not accept wagers or promise prediction accuracy. Past results do not guarantee future outcomes. Connect only services and APIs that the owner is authorized to use.
