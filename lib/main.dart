@@ -330,6 +330,49 @@ class _ArgV1PageState extends State<ArgV1Page> {
       if(mounted)setState(()=>loadingLive=false);
     }
   }
+  String? _normalizedSize(Map<String,dynamic> row) {
+    final raw=(row['bigSmall'] ?? row['result_label'] ?? row['size'] ?? '').toString().trim().toUpperCase();
+    if(raw=='BIG' || raw=='B' || raw=='大') return 'BIG';
+    if(raw=='SMALL' || raw=='S' || raw=='小') return 'SMALL';
+    final number=int.tryParse((row['number'] ?? row['result_value'] ?? '').toString());
+    if(number!=null && number>=0 && number<=9) return number>=5?'BIG':'SMALL';
+    return null;
+  }
+  Widget patternAnalysisPanel() {
+    final recent=liveRows.take(20).toList();
+    final classified=recent.map((row)=>_normalizedSize(row)).whereType<String>().toList();
+    final big=classified.where((x)=>x=='BIG').length;
+    final small=classified.where((x)=>x=='SMALL').length;
+    final unknown=recent.length-classified.length;
+    var streak=0;
+    String? streakType;
+    for(final row in recent) {
+      final size=_normalizedSize(row);
+      if(size==null) continue;
+      if(streakType==null) {streakType=size; streak=1;}
+      else if(size==streakType) {streak++;}
+      else break;
+    }
+    final enough=classified.length>=10;
+    final lean=enough && big!=small ? (big>small?'BIG':'SMALL') : null;
+    final share=classified.isEmpty?0.0:(big>small?big:small)/classified.length*100;
+    return Card(color:panel,child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+      const Text('RECENT PATTERN ANALYSIS',style:TextStyle(fontSize:17,fontWeight:FontWeight.bold)),
+      const SizedBox(height:6),
+      Text('Analyzed ${classified.length} classified results from the latest ${recent.length} loaded records.'),
+      const SizedBox(height:8),
+      Row(children:[
+        Expanded(child:Text('BIG: ${big}',style:const TextStyle(color:Color(0xFF78D69A),fontWeight:FontWeight.bold))),
+        Expanded(child:Text('SMALL: ${small}',style:const TextStyle(color:Color(0xFFFF8C8C),fontWeight:FontWeight.bold))),
+      ]),
+      Text('Unclassified records: ${unknown}'),
+      Text(streakType==null?'Current streak: not available':'Latest visible streak: ${streakType} × ${streak}'),
+      const SizedBox(height:8),
+      Text(!enough?'Pattern lean: insufficient data (need at least 10 classified results).':lean==null?'Pattern lean: no side dominates this sample.':'Descriptive sample lean: ${lean} (${share.toStringAsFixed(0)}% of classified results).'),
+      const SizedBox(height:6),
+      const Text('This summarizes past records only. It does not establish the next outcome, does not verify Mark Pro/GoaOK data, and must not be treated as a bet instruction.',style:TextStyle(color:Colors.orangeAccent,fontSize:12)),
+    ])));
+  }
   Widget liveResultsPanel()=>Card(color:panel,child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
     const Text('SOURCE RESULT HISTORY',style:TextStyle(fontSize:17,fontWeight:FontWeight.bold)),
     const SizedBox(height:6),
@@ -367,6 +410,8 @@ class _ArgV1PageState extends State<ArgV1Page> {
       )),
       const SizedBox(height:12),
       liveResultsPanel(),
+      const SizedBox(height:10),
+      patternAnalysisPanel(),
       const SizedBox(height:16),
       const Text('BIG / SMALL',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),
       const SizedBox(height:8),
