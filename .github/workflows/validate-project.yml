@@ -78,11 +78,16 @@ jobs:
           admin = Path("website/admin.html").read_text(encoding="utf-8")
           push = Path("supabase/functions/send-push/index.ts").read_text(encoding="utf-8")
           schema = Path("supabase/schema.sql").read_text(encoding="utf-8").lower()
+          app = Path("lib/main.dart").read_text(encoding="utf-8")
 
           checks = {
               "public content is HTML-escaped": "const safe=s=>String(s??'').replace" in site,
               "public auth refresh is deferred": "db.auth.onAuthStateChange(()=>{setTimeout(" in site,
               "practice mode is clearly labeled": "Practice only: this does not connect to Mark Pro" in site,
+              "website timer uses local minute boundaries": "const argPeriodId=now=>" in site and "argRemaining=60-argNow.getSeconds()" in site,
+              "website resets practice choice on period change": "if(nextRound!==argRound)" in site and "arg-choice" in site,
+              "Flutter timer uses readable local period ID": "String round=_localPeriodId(DateTime.now())" in app and "static String _localPeriodId(DateTime time)" in app,
+              "Flutter timer clears selection when period changes": "selected=null;" in app and "final currentRound=_localPeriodId(now);" in app,
               "public page discloses no live results API": "No live results API is connected" in site,
               "admin role is checked from profile": "p.data?.role==='admin'" in admin,
               "admin tools hidden without authorization": "$('tools').hidden=!admin" in admin,
