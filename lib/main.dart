@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 const supabaseUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: 'https://sjpgqjxllpjqwsllrzya.supabase.co');
 const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: 'sb_publishable_VUzeFLr_Da61_gz_D6i1GA_1TMv5Seh');
 const supportUrl = 'https://t.me/+pmahyzLfcMA2ODZl';
+const appShareUrl = 'https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-';
 const accent = Color(0xFF9BE7A5), background = Color(0xFF0E1712), panel = Color(0xFF18251C);
 
 Future<void> main() async {
@@ -43,6 +45,9 @@ class _HomePageState extends State<HomePage> {
   @override void dispose(){email.dispose();password.dispose();if(_notificationChannel!=null){client.removeChannel(_notificationChannel!);}super.dispose();}
   void msg(String s){if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(s)));}
   Future<void> support() async { final ok=await launchUrl(Uri.parse(supportUrl),mode:LaunchMode.externalApplication); if(!ok) msg('Telegram link नहीं खुला।'); }
+  Future<void> shareApp() async {
+    await Share.share('TRADE AR MONEY — Learn market basics, understand risk, and explore educational resources.\n\nJoin me: $appShareUrl\n\nEducational content only; no guaranteed results.', subject: 'TRADE AR MONEY');
+  }
   Future<void> openDocument(String url) async {
     final ok=await launchUrl(Uri.parse(url),mode:LaunchMode.externalApplication);
     if(!ok) msg('लिंक नहीं खुला। इंटरनेट कनेक्शन जाँचें।');
@@ -113,6 +118,7 @@ class _HomePageState extends State<HomePage> {
         Card(color:panel,child:ListTile(leading:const Icon(Icons.school,color:accent),title:const Text('Learn & Guides'),subtitle:const Text('Market basics, probability and risk'),onTap:()=>setState(()=>tab=1))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:const Text('Results History'),subtitle:const Text('View verified records from database'),onTap:()=>setState(()=>tab=2))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.notifications,color:accent),title:const Text('Notifications'),subtitle:const Text('Read in-app announcements'),onTap:()=>setState(()=>tab=3))),
+        Card(color:panel,child:ListTile(leading:const Icon(Icons.share,color:accent),title:const Text('Share with friends'),subtitle:const Text('Invite friends to TRADE AR MONEY'),onTap:shareApp)),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.support_agent,color:accent),title:const Text('Telegram Support'),subtitle:const Text('Open Telegram'),onTap:support)),
         if(user!=null)Card(color:panel,child:ListTile(leading:const Icon(Icons.verified_user,color:accent),title:const Text('Signed in'),subtitle:Text(user.email??'Account active'))),
       ]),
@@ -122,7 +128,9 @@ class _HomePageState extends State<HomePage> {
       ListView(padding:const EdgeInsets.all(18),children:[
         const Text('COMMUNITY',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),
         const Card(color:panel,child:ListTile(leading:Icon(Icons.groups,color:accent),title:Text('TRADE AR MONEY Telegram'),subtitle:Text('Community and support currently use the configured Telegram invite link.'))),
-        FilledButton.icon(onPressed:support,icon:const Icon(Icons.send),label:const Text('Open Telegram')),
+        FilledButton.icon(onPressed:shareApp,icon:const Icon(Icons.share),label:const Text('Share with friends')),
+        const SizedBox(height:10),
+        OutlinedButton.icon(onPressed:support,icon:const Icon(Icons.send),label:const Text('Open Telegram')),
       ]),
       ListView(padding:const EdgeInsets.all(18),children:[
         const Text('ACCOUNT',style:TextStyle(fontSize:24,fontWeight:FontWeight.bold)),
@@ -158,6 +166,7 @@ class _HomePageState extends State<HomePage> {
     ];
     return Scaffold(appBar:AppBar(title:const Text('TRADE AR MONEY',style:TextStyle(fontWeight:FontWeight.w900)),actions:[
       IconButton(onPressed:()=>setState(()=>tab=3),tooltip:'Notifications',icon:const Icon(Icons.notifications_outlined,color:accent)),
+      IconButton(onPressed:shareApp,tooltip:'Share app',icon:const Icon(Icons.share_outlined,color:accent)),
       IconButton(onPressed:support,tooltip:'Telegram Support',icon:const Icon(Icons.support_agent,color:accent))]),
       body:pages[tab],bottomNavigationBar:NavigationBar(backgroundColor:panel,selectedIndex:tab,onDestinationSelected:(v)=>setState(()=>tab=v),destinations:const[
         NavigationDestination(icon:Icon(Icons.home_outlined),label:'Home'),
