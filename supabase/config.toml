@@ -1,0 +1,4 @@
+project_id = "sjpgqjxllpjqwsllrzya"
+
+[functions.arg-v1-results]
+verify_jwt = true
