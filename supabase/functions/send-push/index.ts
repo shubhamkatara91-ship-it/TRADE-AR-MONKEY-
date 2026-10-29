@@ -62,10 +62,17 @@ Deno.serve(async (req) => {
   const { data: isAdmin, error: roleError } = await db.rpc("is_admin");
   if (roleError || isAdmin !== true) return response({ error: "Admin access required" }, 403);
 
-  let input: { title?: string; body?: string };
+  let input: unknown;
   try { input = await req.json(); } catch { return response({ error: "Invalid JSON" }, 400); }
-  const title = (input.title ?? "").trim().slice(0, 100);
-  const body = (input.body ?? "").trim().slice(0, 500);
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return response({ error: "JSON object required" }, 400);
+  }
+  const payload = input as { title?: unknown; body?: unknown };
+  if (typeof payload.title !== "string" || typeof payload.body !== "string") {
+    return response({ error: "Title and body must be strings" }, 400);
+  }
+  const title = payload.title.trim().slice(0, 100);
+  const body = payload.body.trim().slice(0, 500);
   if (!title || !body) return response({ error: "Title and body are required" }, 400);
 
   const serviceAccountRaw = Deno.env.get("FCM_SERVICE_ACCOUNT_JSON");
