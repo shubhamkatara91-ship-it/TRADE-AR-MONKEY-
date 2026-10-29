@@ -57,9 +57,18 @@ class _HomePageState extends State<HomePage> {
     if(!(formKey.currentState?.validate()??false)) return;
     setState(()=>busy=true);
     try {
-      if(signup){final r=await client.auth.signUp(email:email.text.trim(),password:password.text);msg(r.session==null?'Signup request भेजी गई। Email confirmation चालू हो तो email देखें।':'Account बन गया।');}
-      else {await client.auth.signInWithPassword(email:email.text.trim(),password:password.text);msg('Login सफल।');}
-      if(mounted)setState((){});
+      if(signup){
+        final r=await client.auth.signUp(email:email.text.trim(),password:password.text);
+        if(mounted && r.session!=null){setState(()=>tab=0);}
+        msg(r.session==null?'Signup request भेजी गई। Email confirmation चालू हो तो email verify करके फिर login करें।':'Account बन गया और login सफल।');
+      } else {
+        await client.auth.signInWithPassword(email:email.text.trim(),password:password.text);
+        if(mounted){
+          setState(()=>tab=0);
+          FocusManager.instance.primaryFocus?.unfocus();
+        }
+        msg('Login सफल। Home खुल गया।');
+      }
     } on AuthException catch(e){msg(e.message);} catch(_){msg('कनेक्शन नहीं हुआ। Supabase सेटिंग और इंटरनेट जाँचें।');}
     finally{if(mounted)setState(()=>busy=false);}
   }
