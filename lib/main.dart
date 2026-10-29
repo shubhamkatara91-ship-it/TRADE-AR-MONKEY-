@@ -243,15 +243,33 @@ class ArgV1Page extends StatefulWidget {
   @override State<ArgV1Page> createState()=>_ArgV1PageState();
 }
 class _ArgV1PageState extends State<ArgV1Page> {
-  int remaining=60, round=1;
+  int remaining=60-DateTime.now().second;
+  int round=DateTime.now().millisecondsSinceEpoch~/60000;
   String? selected;
   final List<String> practiceHistory=[];
   Timer? ticker;
-  @override void initState(){super.initState();ticker=Timer.periodic(const Duration(seconds:1),(_){
-    if(!mounted)return;
-    setState(()=>remaining=remaining<=1?60:remaining-1);
-    if(remaining==60 && mounted) setState(()=>round++);
-  });}
+  @override void initState(){
+    super.initState();
+    _syncRoundClock();
+    ticker=Timer.periodic(const Duration(seconds:1),(_){
+      if(!mounted)return;
+      _syncRoundClock();
+    });
+  }
+  void _syncRoundClock(){
+    final now=DateTime.now();
+    final currentRound=now.millisecondsSinceEpoch~/60000;
+    final nextRemaining=60-now.second;
+    if(currentRound!=round){
+      setState((){
+        round=currentRound;
+        remaining=nextRemaining;
+        selected=null;
+      });
+    }else if(nextRemaining!=remaining){
+      setState(()=>remaining=nextRemaining);
+    }
+  }
   @override void dispose(){ticker?.cancel();super.dispose();}
   void choose(String value){
     setState(()=>selected=value);
@@ -265,8 +283,15 @@ class _ArgV1PageState extends State<ArgV1Page> {
       Container(padding:const EdgeInsets.all(22),decoration:BoxDecoration(color:panel,borderRadius:BorderRadius.circular(20)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
         const Text('ARG V1 • 1-MINUTE ROUND',style:TextStyle(color:accent,fontWeight:FontWeight.bold)),
         const SizedBox(height:8),Text((remaining ~/ 60).toString().padLeft(2,'0') + ':' + (remaining % 60).toString().padLeft(2,'0'),style:const TextStyle(fontSize:42,fontWeight:FontWeight.w900)),
-        Text('Practice round $round',style:const TextStyle(color:Colors.white70)),
+        Text('Local minute period $round',style:const TextStyle(color:Colors.white70)),
       ])),
+      const SizedBox(height:10),
+      Card(color:panel,child:const ListTile(
+        dense:true,
+        leading:Icon(Icons.schedule,color:accent),
+        title:Text('Clock status: synchronized to this device'),
+        subtitle:Text('This is a local minute period, not an official provider round ID. Live results are not connected.'),
+      )),
       const SizedBox(height:16),
       const Text('BIG / SMALL',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),
       const SizedBox(height:8),
