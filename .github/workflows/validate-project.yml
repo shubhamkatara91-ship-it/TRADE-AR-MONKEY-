@@ -88,7 +88,7 @@ jobs:
               "website resets practice choice on period change": "if(nextRound!==argRound)" in site and "arg-choice" in site,
               "Flutter timer uses readable local period ID": "String round=_localPeriodId(DateTime.now())" in app and "static String _localPeriodId(DateTime time)" in app,
               "Flutter timer clears selection when period changes": "selected=null;" in app and "final currentRound=_localPeriodId(now);" in app,
-              "ARG V1 protected feed requires sign-in": "Supabase.instance.client.auth.currentUser == null" in app and "Source result history के लिए पहले sign in करें。" in app,
+              "ARG V1 protected feed requires sign-in": "if (Supabase.instance.client.auth.currentUser == null)" in app and "liveError =" in app,
               "public page discloses no live results API": "No live results API is connected" in site,
               "admin role is checked from profile": "p.data?.role==='admin'" in admin,
               "admin tools hidden without authorization": "$('tools').hidden=!admin" in admin,
