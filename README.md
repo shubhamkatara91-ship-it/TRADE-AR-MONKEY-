@@ -58,7 +58,7 @@ Never commit a Supabase service-role key, Firebase service-account JSON, provide
 
 ## Product scope
 
-TRADE AR MONEY is an educational community and practice simulator, not a betting or gambling service. The Auto Bet screen records manually entered practice outcomes only; it does not place wagers, access balances, move money, fetch a live game outcome, or guarantee predictions. Past outcomes do not determine future independent outcomes.
+TRADE AR MONEY is an educational community app with ARG V1 practice controls only, not a betting or gambling service. ARG V1 does not place wagers, access balances, move money, or guarantee predictions. Past outcomes do not determine future independent outcomes.
 
 ## Owner guides
 
