@@ -6,7 +6,7 @@ The app includes a support button opening the supplied Telegram invite:
 https://t.me/+pmahyzLfcMA2ODZl
 
 ## Current verified status
-- Android release APK compiled successfully in GitHub Actions build #19.
+- Latest Android release APK compiled successfully in GitHub Actions run `40810500955`; artifact ID `12870113190` (expires 12 November 2026).
 - Flutter app source includes email/password signup, login, password reset, logout, learning articles, result-history display, announcements, and a role-gated admin interface.
 - A responsive browser website and separate admin page are present under `website/`.
 - Supabase schema and an admin-only FCM Edge Function are in the repository, but deployment/configuration of the backend and Firebase have not been confirmed.
@@ -14,10 +14,13 @@ https://t.me/+pmahyzLfcMA2ODZl
 - No authorized live results API is connected. The app must not show invented outcomes as live results.
 
 ## Download the Android APK
-Open the successful build #19, scroll to **Artifacts**, and download `TRADE-AR-MONEY-release-apk`:
-https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40747801664
+Open the [latest successful build](https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40810500955), scroll to **Artifacts**, and download `TRADE-AR-MONEY-release-apk-latest` (artifact ID `12870113190`).
 
 The artifact is a ZIP containing the APK. Extract it, then install on Android. This confirms compilation only; it does not prove the app has passed end-to-end device/backend testing. Workflow artifacts expire.
+
+## Client handover
+
+The client handover pack is available at [docs/CLIENT_HANDOFF_HI.md](docs/CLIENT_HANDOFF_HI.md), with release gates and owner-side setup steps.
 
 ## Website deployment blocker
 Latest attempt:
