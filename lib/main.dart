@@ -166,8 +166,6 @@ class _HomePageState extends State<HomePage> {
       onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const ArgV1Page())),
     )),
     const SizedBox(height:10),
-    )),
-    const SizedBox(height:10),
     const Text('Note: live results/predictions are not connected. This tool does not generate or claim live signals.',style:TextStyle(color:Colors.orangeAccent)),
   ]);
   Widget profitPage()=>ListView(padding:const EdgeInsets.all(18),children:[
