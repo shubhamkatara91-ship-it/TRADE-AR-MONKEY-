@@ -34,7 +34,18 @@ jobs:
       - name: Build release APK
         working-directory: build_scaffold
         run: flutter build apk --release
+      - name: Prepare release bundle
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          mkdir -p release_bundle
+          cp build_scaffold/build/app/outputs/flutter-apk/app-release.apk release_bundle/TRADE-AR-MONEY.apk
+          printf 'TRADE AR MONEY Android build\nCommit: %s\nGitHub Actions run: %s\nBuilt at (UTC): %s\n\nThis is a CI-compiled APK. Production signing, backend setup, and physical-device acceptance testing are not certified by this build.\n' "$SOURCE_SHA" "$RUN_NUMBER" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > release_bundle/BUILD_INFO.txt
+          cd release_bundle
+          sha256sum TRADE-AR-MONEY.apk > SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         with:
           name: TRADE-AR-MONEY-release-apk-latest
-          path: build_scaffold/build/app/outputs/flutter-apk/app-release.apk
+          path: release_bundle/
+          if-no-files-found: error
