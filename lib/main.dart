@@ -505,13 +505,19 @@ class AutoBetPracticePage extends StatefulWidget {
 class _AutoBetPracticePageState extends State<AutoBetPracticePage> {
   final List<int> capitals = [300, 500, 1000, 2000];
   final List<int> targets = [15, 30, 45, 90];
-  final List<int> betByLevel = [5, 12, 29, 70, 168];
+  final List<int> defaultBetByLevel = [5, 12, 29, 70, 168];
+  final Map<int, List<int>> betPlans = const {
+    500: [10, 23, 53, 122, 281],
+    1000: [20, 46, 106, 244, 562],
+    2000: [40, 92, 212, 488, 1123],
+  };
   int capital = 300, targetPercent = 15, maxLevel = 5, level = 1;
   double practicePnl = 0;
   bool running = false, stopped = false;
   String stopReason = 'Practice session not started';
   final List<String> history = [];
   double get targetAmount => capital * targetPercent / 100;
+  List<int> get betByLevel => betPlans[capital] ?? defaultBetByLevel;
   int get currentPracticeBet => betByLevel[level - 1];
   double get remainingCapital => capital + practicePnl;
   double get progress => targetAmount <= 0 ? 0 : (practicePnl / targetAmount).clamp(0.0, 1.0);
