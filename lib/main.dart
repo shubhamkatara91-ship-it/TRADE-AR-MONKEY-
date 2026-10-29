@@ -348,7 +348,7 @@ class _ArgV1PageState extends State<ArgV1Page> {
     String? streakType;
     for(final row in recent) {
       final size=_normalizedSize(row);
-      if(size==null) continue;
+      if(size==null) break;
       if(streakType==null) {streakType=size; streak=1;}
       else if(size==streakType) {streak++;}
       else break;
