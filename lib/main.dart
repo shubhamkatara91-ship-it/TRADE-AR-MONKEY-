@@ -86,6 +86,15 @@ class _HomePageState extends State<HomePage> {
     final r=await client.from('learning_articles').select('id,title,body,category').eq('published',true).order('created_at',ascending:false).limit(100);
     return List<Map<String,dynamic>>.from(r);
   }
+  Widget insightsPage()=>ListView(padding:const EdgeInsets.all(18),children:[
+    const Text('AI & MARKET INSIGHTS',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
+    const SizedBox(height:12),
+    Card(color:panel,child:const ListTile(leading:Icon(Icons.auto_graph,color:accent),title:Text('Market Insights'),subtitle:Text('Review historical information and understand probability. No live market feed is connected.'))),
+    Card(color:panel,child:const ListTile(leading:Icon(Icons.psychology_alt,color:accent),title:Text('AI Analytics'),subtitle:Text('Analytics tools can be added when a verified data source and model are configured. This build does not generate live predictions.'))),
+    Card(color:panel,child:const ListTile(leading:Icon(Icons.shield_outlined,color:accent),title:Text('Risk Guide'),subtitle:Text('Past results do not guarantee future outcomes. Avoid treating random outcomes as certain signals.'))),
+    const SizedBox(height:8),
+    const Text('Educational information only. No guaranteed predictions or betting features.',style:TextStyle(color:Colors.orangeAccent)),
+  ]);
   Widget learningPage()=>RefreshIndicator(onRefresh:()async{setState((){});await loadLearning();},child:FutureBuilder<List<Map<String,dynamic>>>(future:loadLearning(),builder:(context,s){
     if(s.connectionState==ConnectionState.waiting)return const Center(child:CircularProgressIndicator());
     if(s.hasError)return ListView(children:[errorBox(s.error!)]);
@@ -125,7 +134,10 @@ class _HomePageState extends State<HomePage> {
           Text('Learn the market. Understand the risk. Make informed decisions.'),SizedBox(height:14),
           Text('Educational content only. Live data API is not connected; no live results or guaranteed predictions are shown.',style:TextStyle(color:Colors.white70))])),
         const SizedBox(height:18),const Text('QUICK ACCESS',style:TextStyle(fontSize:18,fontWeight:FontWeight.bold)),
-        Card(color:panel,child:ListTile(leading:const Icon(Icons.school,color:accent),title:const Text('Learn & Guides'),subtitle:const Text('Market basics, probability and risk'),onTap:()=>setState(()=>tab=1))),
+        Card(color:panel,child:ListTile(leading:const Icon(Icons.auto_graph,color:accent),title:const Text('AI Analytics'),subtitle:const Text('Market insights and risk guide'),onTap:()=>setState(()=>tab=1))),
+        Card(color:panel,child:ListTile(leading:const Icon(Icons.bolt,color:accent),title:const Text('WinGo — 1 Minute'),subtitle:const Text('Open ARG V1 practice timer'),onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const ArgV1Page())))),
+        Card(color:panel,child:ListTile(leading:const Icon(Icons.workspace_premium,color:accent),title:const Text('VIP Membership'),subtitle:const Text('Membership status and future features'),onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const VipMembershipPage())))),
+        Card(color:panel,child:ListTile(leading:const Icon(Icons.shield_outlined,color:accent),title:const Text('Risk Guide'),subtitle:const Text('Understand probability and risk'),onTap:()=>setState(()=>tab=1))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.history,color:accent),title:const Text('Results History'),subtitle:const Text('View admin-entered history records'),onTap:()=>setState(()=>tab=2))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.bolt,color:accent),title:const Text('ARG V1 — Practice Mode'),subtitle:const Text('1-minute timer and Big/Small practice controls'),onTap:()=>Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const ArgV1Page())))),
         Card(color:panel,child:ListTile(leading:const Icon(Icons.notifications,color:accent),title:const Text('Notifications'),subtitle:const Text('Read in-app announcements'),onTap:()=>setState(()=>tab=3))),
@@ -133,7 +145,7 @@ class _HomePageState extends State<HomePage> {
         Card(color:panel,child:ListTile(leading:const Icon(Icons.support_agent,color:accent),title:const Text('Telegram Support'),subtitle:const Text('Open Telegram'),onTap:support)),
         if(user!=null)Card(color:panel,child:ListTile(leading:const Icon(Icons.verified_user,color:accent),title:const Text('Signed in'),subtitle:Text(user.email??'Account active'))),
       ]),
-      learningPage(),
+      insightsPage(),
       resultsPage(),
       notificationsPage(),
       ListView(padding:const EdgeInsets.all(18),children:[
@@ -187,12 +199,11 @@ class _HomePageState extends State<HomePage> {
       IconButton(onPressed:()=>setState(()=>tab=3),tooltip:'Notifications',icon:const Icon(Icons.notifications_outlined,color:accent)),
       IconButton(onPressed:shareApp,tooltip:'Share app',icon:const Icon(Icons.share_outlined,color:accent)),
       IconButton(onPressed:support,tooltip:'Telegram Support',icon:const Icon(Icons.support_agent,color:accent))]),
-      body:pages[tab],bottomNavigationBar:NavigationBar(backgroundColor:panel,selectedIndex:tab,onDestinationSelected:(v)=>setState(()=>tab=v),destinations:const[
+      body:pages[tab],bottomNavigationBar:NavigationBar(backgroundColor:panel,selectedIndex:tab==5?4:tab,onDestinationSelected:(v){if(v==1){Navigator.of(context).push(MaterialPageRoute(builder:(_)=>const ArgV1Page()));}else{setState(()=>tab=v==4?5:v);}},destinations:const[
         NavigationDestination(icon:Icon(Icons.home_outlined),label:'Home'),
-        NavigationDestination(icon:Icon(Icons.menu_book_outlined),label:'Learn'),
+        NavigationDestination(icon:Icon(Icons.bolt_outlined),label:'WinGo'),
         NavigationDestination(icon:Icon(Icons.history),label:'Results'),
         NavigationDestination(icon:Icon(Icons.notifications_outlined),label:'Alerts'),
-        NavigationDestination(icon:Icon(Icons.groups_outlined),label:'Community'),
         NavigationDestination(icon:Icon(Icons.person_outline),label:'Account'),
       ]));
   }
@@ -320,4 +331,23 @@ class _AdminPanelState extends State<AdminPanel> {
       const SizedBox(height:6),const Text('Records are entered manually and are not independently verified by this app. Check the original source; no live API is connected.',style:TextStyle(color:Colors.orangeAccent))
     ]),
   ]));
+}
+
+
+class VipMembershipPage extends StatelessWidget {
+  const VipMembershipPage({super.key});
+  @override Widget build(BuildContext context)=>Scaffold(
+    appBar:AppBar(title:const Text('VIP Membership')),
+    body:ListView(padding:const EdgeInsets.all(18),children:[
+      Container(padding:const EdgeInsets.all(22),decoration:BoxDecoration(color:panel,borderRadius:BorderRadius.circular(20)),child:const Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+        Icon(Icons.workspace_premium,color:accent,size:38),SizedBox(height:12),
+        Text('TRADE AR MONEY VIP',style:TextStyle(fontSize:23,fontWeight:FontWeight.w900)),
+        SizedBox(height:8),Text('Membership section ready for future authorized features. No paid membership or payment gateway is active in this build.')
+      ])),
+      const SizedBox(height:14),
+      const Card(color:panel,child:ListTile(leading:Icon(Icons.insights,color:accent),title:Text('Analytics'),subtitle:Text('Requires a verified data source and tested analytics model.'))),
+      const Card(color:panel,child:ListTile(leading:Icon(Icons.history,color:accent),title:Text('History'),subtitle:Text('Historical records are available from the Results tab when entered by an authorized admin.'))),
+      const Card(color:panel,child:ListTile(leading:Icon(Icons.support_agent,color:accent),title:Text('Support'),subtitle:Text('Use Telegram Support from the dashboard.'))),
+    ]),
+  );
 }
