@@ -117,8 +117,13 @@ class _HomePageState extends State<HomePage> {
     try {
       if(signup){
         final r=await client.auth.signUp(email:e,password:p,data:{'username':username.text.trim(),'mobile':phone});
-        if(mounted && r.session!=null){setState(()=>tab=0);}
-        msg(r.session==null?'Signup request भेजी गई। Email confirmation चालू हो तो email verify करके फिर login करें।':'Account बन गया और login सफल।');
+        if(mounted && r.session!=null){
+          setState(()=>tab=0);
+          FocusManager.instance.primaryFocus?.unfocus();
+          msg('Account बन गया। अब उसी email और password से login कर सकते हैं।');
+        } else {
+          msg('Account request मिली, लेकिन Supabase में email confirmation चालू है। Signup पर OTP/email confirmation हटाने के लिए Supabase Authentication settings में Confirm email बंद करें, फिर दोबारा प्रयास करें।');
+        }
       } else {
         await client.auth.signInWithPassword(email:e,password:p);
         if(mounted){setState(()=>tab=0);FocusManager.instance.primaryFocus?.unfocus();}
@@ -360,7 +365,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     setState(()=>busy=true);
     try {
       await widget.client.auth.updateUser(UserAttributes(password:password.text));
-      if(mounted)setState(()=>status='Password successfully changed. अब वापस जाकर login करें।');
+      await widget.client.auth.signOut();
+      if(mounted){
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Password बदल गया। अब नए password से login करें।')));
+      }
     } on AuthException catch(x){if(mounted)setState(()=>status='Password update नहीं हुआ: ${x.message}');}
       catch(_){if(mounted)setState(()=>status='Password update नहीं हो सका। फिर प्रयास करें।');}
     finally{if(mounted)setState(()=>busy=false);}
