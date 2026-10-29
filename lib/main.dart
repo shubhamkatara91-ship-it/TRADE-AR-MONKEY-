@@ -308,19 +308,15 @@ class _HomePageState extends State<HomePage> {
       IconButton(onPressed:()=>setState(()=>tab=3),tooltip:'Notifications',icon:const Icon(Icons.notifications_outlined,color:accent)),
       IconButton(onPressed:shareApp,tooltip:'Share app',icon:const Icon(Icons.share_outlined,color:accent)),
       IconButton(onPressed:support,tooltip:'Telegram Support',icon:const Icon(Icons.support_agent,color:accent))]),
-      body:pages[tab],bottomNavigationBar:NavigationBar(backgroundColor:panel,selectedIndex:tab==0?1:tab==1?0:tab==5?2:tab==6?3:tab==7?4:0,onDestinationSelected:(v){
-        if(v==0){setState(()=>tab=1);}
-        else if(v==1){setState(()=>tab=0);}
-        else if(v==2){setState(()=>tab=5);}
-        else if(v==3){setState(()=>tab=6);}
-        else if(v==4){setState(()=>tab=7);}
-        else if(v==5){logout();}
+      body:pages[tab],bottomNavigationBar:NavigationBar(backgroundColor:panel,selectedIndex:tab==0?0:tab==5?1:tab==1?2:0,onDestinationSelected:(v){
+        if(v==0){setState(()=>tab=0);}
+        else if(v==1){setState(()=>tab=5);}
+        else if(v==2){setState(()=>tab=1);}
+        else if(v==3){logout();}
       },destinations:const[
+        NavigationDestination(icon:Icon(Icons.home_outlined),selectedIcon:Icon(Icons.home),label:'Home'),
+        NavigationDestination(icon:Icon(Icons.account_balance_wallet_outlined),selectedIcon:Icon(Icons.account_balance_wallet),label:'Profit'),
         NavigationDestination(icon:Icon(Icons.build_outlined),label:'Tools'),
-        NavigationDestination(icon:Icon(Icons.home_outlined),label:'Home'),
-        NavigationDestination(icon:Icon(Icons.person_outline),label:'Profile'),
-        NavigationDestination(icon:Icon(Icons.support_agent_outlined),label:'Support'),
-        NavigationDestination(icon:Icon(Icons.workspace_premium_outlined),label:'Premium'),
         NavigationDestination(icon:Icon(Icons.logout),label:'Log Out'),
       ]));
   }
