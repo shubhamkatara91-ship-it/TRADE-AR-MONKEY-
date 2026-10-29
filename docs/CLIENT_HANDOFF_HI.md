@@ -13,6 +13,10 @@
 - Supabase SQL schema with Row Level Security policies and admin-role checks.
 - GitHub Actions workflow that validates website HTML/inline JavaScript and compiles an Android release APK.
 
+## APK signing / distribution
+
+The current CI artifact is a build/test APK, not a verified production-signed release. Before Play Store publication or formal client distribution, the owner must create/obtain an Android upload keystore, store its credentials only in protected GitHub Actions secrets, configure release signing in the Android Gradle project, and verify the signing certificate. Never commit the keystore or passwords to GitHub. The current workflow compiles the app but does not configure a private production signing key.
+
 ## Production launch gate — ये items अभी sign-off नहीं हुए हैं
 
 | Item | Current status | Required proof |
