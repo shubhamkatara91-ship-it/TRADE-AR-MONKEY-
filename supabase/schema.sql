@@ -5,6 +5,8 @@ create table if not exists public.profiles (
  created_at timestamptz not null default now()
 );
 alter table public.profiles enable row level security;
+-- Explicit API privileges; row-level security still limits each user's rows and allowed inserts.
+grant select, insert on public.profiles to authenticated;
 drop policy if exists "Users can read own profile" on public.profiles;
 create policy "Users can read own profile" on public.profiles for select using (auth.uid()=id);
 drop policy if exists "Users can create own user profile" on public.profiles;
