@@ -28,7 +28,7 @@ The client handover pack is available at [docs/CLIENT_HANDOFF_HI.md](docs/CLIENT
 
 ## Website deployment blocker
 Latest attempt:
-https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40748848366
+https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/actions/runs/40820990283
 
 A repository owner must enable GitHub Pages once in **Settings → Pages → Build and deployment → Source: GitHub Actions**:
 https://github.com/shubhamkatara91-ship-it/TRADE-AR-MONKEY-/settings/pages
